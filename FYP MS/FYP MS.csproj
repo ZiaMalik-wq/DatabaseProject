@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<!-- 1️⃣  Explicitly target Windows desktop on .NET 8 -->
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<OutputType>WinExe</OutputType>
+
+		<!-- 2️⃣  Tell the desktop SDK which stacks you use -->
+		<UseWPF>true</UseWPF>
+		<UseWindowsForms>true</UseWindowsForms>
+	</PropertyGroup>
+	
+	<!-- 4️⃣  Remove two orphaned files you mentioned -->
+	<ItemGroup>
+		<Compile Remove="UpdateAssignProject.xaml.cs" />
+		<Page Remove="UpdateAssignProject.xaml" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="Dapper" Version="2.1.66" />
+	  <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
+	  <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.5" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
+	  <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.5" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="appsettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+</Project>

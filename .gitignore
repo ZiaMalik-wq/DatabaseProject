@@ -1,0 +1,14 @@
+# Ignore build files
+bin/
+obj/
+.vs/
+packages/
+*.user
+*.suo
+*.cache
+*.log
+
+# Ignore database and config files (if you don't want to upload DB)
+*.mdf
+*.ldf
+appsettings.json

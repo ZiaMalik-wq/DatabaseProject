@@ -1,0 +1,107 @@
+﻿<UserControl
+    x:Class="FYP_MS.Views.Students.StudentMainView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <DockPanel Background="AliceBlue">
+        <!--  Toolbar Docked Top  -->
+        <WrapPanel
+            Margin="0,5"
+            VerticalAlignment="Center"
+            DockPanel.Dock="Top">
+            <Label Margin="10,0" Content="Search" />
+            <TextBox
+                x:Name="SearchBar"
+                Width="200"
+                MinHeight="30"
+                Margin="5"
+                Padding="6,4"
+                Background="White"
+                BorderBrush="#CCC"
+                BorderThickness="1"
+                Style="{x:Null}"
+                TextChanged="SearchBar_TextChanged" />
+            <Button
+                Margin="5"
+                Click="clearTxt_Click"
+                Content="Clear Text"
+                Style="{StaticResource Btntype1}" />
+            <Button
+                Margin="5"
+                Click="AddStuBtn"
+                Content="Add Student"
+                Style="{StaticResource Btntype1}" />
+            <Button
+                Margin="5"
+                Click="UpdateStudentBtnClick"
+                Content="Update Student"
+                Style="{StaticResource Btntype1}" />
+            <Button
+                Margin="5"
+                Click="DeleteStudentButton_Click"
+                Content="Delete Student"
+                Style="{StaticResource Btntype1}" />
+        </WrapPanel>
+
+        <!--  DataGrid Fills Remaining Area  -->
+        <DataGrid
+            x:Name="Grid"
+            Margin="5"
+            AlternatingRowBackground="{StaticResource Light Theme Text Color}"
+            AutoGenerateColumns="False"
+            Background="LightGray"
+            CanUserAddRows="False"
+            CanUserDeleteRows="False"
+            CanUserResizeRows="False"
+            DockPanel.Dock="Bottom"
+            IsReadOnly="True"
+            MouseDoubleClick="UpdateStudentBtnClick"
+            RowBackground="LightYellow"
+            ScrollViewer.HorizontalScrollBarVisibility="Auto"
+            ScrollViewer.VerticalScrollBarVisibility="Auto">
+
+            <!--  Explicit Columns (no stray Row property!)  -->
+            <DataGrid.Columns>
+                <!--  ID is hidden  -->
+                <DataGridTextColumn
+                    Binding="{Binding Path=Row.ItemArray[0]}"
+                    Header="ID"
+                    Visibility="Collapsed" />
+
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding Path=Row.ItemArray[1]}"
+                    Header="First Name" />
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding Path=Row.ItemArray[2]}"
+                    Header="Last Name" />
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding Path=Row.ItemArray[3]}"
+                    Header="Reg. No." />
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding Path=Row.ItemArray[4]}"
+                    Header="Contact" />
+                <DataGridTextColumn
+                    Width="2*"
+                    Binding="{Binding Path=Row.ItemArray[5]}"
+                    Header="Email" />
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding Path=Row.ItemArray[6], StringFormat=d}"
+                    Header="D.O.B" />
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding Path=Row.ItemArray[7]}"
+                    Header="Gender" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</UserControl>

@@ -1,0 +1,174 @@
+﻿<Window
+    x:Class="FYP_MS.Views.Students.AddStudentView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Stu Edit"
+    Width="500"
+    Height="300"
+    AllowsTransparency="True"
+    BorderBrush="Transparent"
+    BorderThickness="10"
+    FontFamily="Poppins"
+    FontSize="14"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="None"
+    mc:Ignorable="d">
+
+    <Window.Resources>
+        <SolidColorBrush x:Key="LightThemeTextColor" Color="#FFFFFF" />
+    </Window.Resources>
+
+    <Window.Effect>
+        <DropShadowEffect
+            BlurRadius="15"
+            Direction="-90"
+            RenderingBias="Quality"
+            ShadowDepth="5"
+            Color="Black" />
+    </Window.Effect>
+
+    <Grid Margin="10" Background="{StaticResource LightThemeTextColor}">
+        <!--  Define 5 rows: 4 for inputs, 1 for buttons  -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <!--  Define 4 columns: label/input ×2  -->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!--  Row 0: First Name / Last Name  -->
+        <Label
+            Grid.Row="0"
+            Grid.Column="0"
+            Margin="0,5"
+            VerticalAlignment="Center"
+            Content="First Name" />
+        <TextBox
+            x:Name="FirstName"
+            Grid.Row="0"
+            Grid.Column="1"
+            Width="120"
+            Margin="5"
+            MaxLength="100" />
+
+        <Label
+            Grid.Row="0"
+            Grid.Column="2"
+            Margin="20,5,0,5"
+            VerticalAlignment="Center"
+            Content="Last Name" />
+        <TextBox
+            x:Name="LastName"
+            Grid.Row="0"
+            Grid.Column="3"
+            Width="120"
+            Margin="5"
+            MaxLength="100" />
+
+        <!--  Row 1: Contact No. / Reg. No.  -->
+        <Label
+            Grid.Row="1"
+            Grid.Column="0"
+            Margin="0,5"
+            VerticalAlignment="Center"
+            Content="Contact No." />
+        <TextBox
+            x:Name="ContactNo"
+            Grid.Row="1"
+            Grid.Column="1"
+            Width="120"
+            Margin="5"
+            MaxLength="11" />
+
+        <Label
+            Grid.Row="1"
+            Grid.Column="2"
+            Margin="20,5,0,5"
+            VerticalAlignment="Center"
+            Content="Reg. No." />
+        <TextBox
+            x:Name="RegNo"
+            Grid.Row="1"
+            Grid.Column="3"
+            Width="120"
+            Margin="5"
+            MaxLength="12" />
+
+        <!--  Row 2: Email / Gender  -->
+        <Label
+            Grid.Row="2"
+            Grid.Column="0"
+            Margin="0,5"
+            VerticalAlignment="Center"
+            Content="Email" />
+        <TextBox
+            x:Name="Email"
+            Grid.Row="2"
+            Grid.Column="1"
+            Width="120"
+            Margin="5" />
+
+        <Label
+            Grid.Row="2"
+            Grid.Column="2"
+            Margin="20,5,0,5"
+            VerticalAlignment="Center"
+            Content="Gender" />
+        <ComboBox
+            x:Name="CmboxGender"
+            Grid.Row="2"
+            Grid.Column="3"
+            Width="120"
+            Margin="5" />
+
+        <!--  Row 3: D.O.B  -->
+        <Label
+            Grid.Row="3"
+            Grid.Column="0"
+            Margin="0,5"
+            VerticalAlignment="Center"
+            Content="D.O.B" />
+        <DatePicker
+            x:Name="Datepicker"
+            Grid.Row="3"
+            Grid.Column="1"
+            Width="120"
+            Margin="5" />
+
+        <!--  Row 4: Action Buttons centered  -->
+        <StackPanel
+            Grid.Row="4"
+            Grid.ColumnSpan="4"
+            Margin="0,20,0,0"
+            HorizontalAlignment="Center"
+            Orientation="Horizontal">
+            <Button
+                x:Name="donebtn"
+                Width="75"
+                Height="30"
+                Margin="5"
+                Click="donebtn_Click"
+                Content="Save"
+                Style="{StaticResource donebtn}" />
+            <Button
+                Width="75"
+                Height="30"
+                Margin="5"
+                Click="Cancel_Click"
+                Content="Cancel"
+                Style="{StaticResource cancelbtn}" />
+        </StackPanel>
+    </Grid>
+</Window> 
