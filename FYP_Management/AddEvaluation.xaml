@@ -30,9 +30,8 @@
 
     <Canvas Background="{StaticResource Light Theme Text Color}">
         <Label
-            Canvas.Left="25"
-            Canvas.Top="27"
-            HorizontalAlignment="Center"
+            Canvas.Top="35"
+            HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Content="Evaluation Name" />
         <TextBox
@@ -44,9 +43,9 @@
             VerticalAlignment="Center"
             MaxLength="100" />
         <Label
-            Canvas.Left="226"
-            Canvas.Top="73"
-            HorizontalAlignment="Center"
+            Canvas.Left="213"
+            Canvas.Top="76"
+            HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Content="Total Wightage" />
         <TextBox
@@ -60,9 +59,9 @@
             PreviewTextInput="TotalMarks_PreviewTextInput"
             Text="" />
         <Label
-            Canvas.Left="22"
-            Canvas.Top="73"
-            HorizontalAlignment="Center"
+            Canvas.Left="10"
+            Canvas.Top="85"
+            HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Content="Total Marks" />
         <TextBox
