@@ -1,10 +1,10 @@
-﻿using FYP_MS.HelperClasses;
-using FYP_MS.Validations1;
+﻿using FYP_Management.HelperClasses;
+using FYP_Management.Validations1;
 using System;
 using System.Windows;
-using FYP_MS.Models;
+using FYP_Management.Models;
 
-namespace FYP_MS.Views.Students
+namespace FYP_Management.Views.Students
 {
     /// <summary>
     /// Interaction logic for UpdateStudent.xaml

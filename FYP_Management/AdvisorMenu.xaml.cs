@@ -1,11 +1,11 @@
-﻿using FYP_MS.HelperClasses;
+﻿using FYP_Management.HelperClasses;
 using System;
 using System.Data;
 using System.Windows;
 using System.Windows.Controls;
-using FYP_MS.Views.Advisors;
+using FYP_Management.Views.Advisors;
 
-namespace FYP_MS
+namespace FYP_Management
 {
     /// <summary>
     /// Interaction logic for AdvisorMenu.xaml
@@ -64,7 +64,7 @@ namespace FYP_MS
                 // Passing value to the next form to update them
                 try
                 {
-                    updateAdv ustu = new updateAdv(row.Row.ItemArray[1].ToString(), row.Row.ItemArray[2].ToString(), row.Row.ItemArray[3].ToString(), int.Parse(row.Row.ItemArray[4].ToString()), row.Row.ItemArray[5].ToString(), (row.Row.ItemArray[6].ToString()), (DateTime)row.Row.ItemArray[7], (row.Row.ItemArray[8].ToString()), (int)row.Row.ItemArray[0]);
+                    UpdateAdvisorView ustu = new UpdateAdvisorView(row.Row.ItemArray[1].ToString(), row.Row.ItemArray[2].ToString(), row.Row.ItemArray[3].ToString(), int.Parse(row.Row.ItemArray[4].ToString()), row.Row.ItemArray[5].ToString(), (row.Row.ItemArray[6].ToString()), (DateTime)row.Row.ItemArray[7], (row.Row.ItemArray[8].ToString()), (int)row.Row.ItemArray[0]);
                     ustu.ShowDialog();
                     LoadAdvisors();
                     Grid_Loaded();
@@ -86,6 +86,11 @@ namespace FYP_MS
         private void ClearText_Click(object sender, RoutedEventArgs e)
         {
             SearchBar.Text = "";
+        }
+
+        private void DeleteAdvBtn_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

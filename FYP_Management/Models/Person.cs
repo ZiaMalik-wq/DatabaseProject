@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FYP_MS.Models
+namespace FYP_Management.Models
 {
     public class Person(string firstName, string lastName, string contact, string email, DateTime dateOfBirth, int gender)
     {

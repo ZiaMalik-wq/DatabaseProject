@@ -1,21 +1,21 @@
-﻿using FYP_MS.HelperClasses;
-using FYP_MS.Validations1;
-using FYP_MS.Models;
+﻿using FYP_Management.HelperClasses;
+using FYP_Management.Validations1;
+using FYP_Management.Models;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
 
-namespace FYP_MS
+namespace FYP_Management.Views.Advisors
 {
     /// <summary>
     /// Interaction logic for updateAdv.xaml
     /// </summary>
-    public partial class updateAdv : Window
+    public partial class UpdateAdvisorView : Window
     {
         private int PId;
-        public updateAdv(string FirstName, string LastName,string design ,int salary, string Contact, string email, DateTime dateTime, string gender, int PersonID)
+        public UpdateAdvisorView(string FirstName, string LastName,string design ,int salary, string Contact, string email, DateTime dateTime, string gender, int PersonID)
         {
             InitializeComponent();
             CmboxGender.ItemsSource = Lookup.getGenders();

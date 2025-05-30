@@ -1,9 +1,9 @@
-﻿using FYP_MS.HelperClasses;
+﻿using FYP_Management.HelperClasses;
 using System.Windows;
 using System.Windows.Controls;
-using FYP_MS.Views.Students;
+using FYP_Management.Views.Students;
 
-namespace FYP_MS
+namespace FYP_Management
 {
     public partial class MainWindow : Window
     {

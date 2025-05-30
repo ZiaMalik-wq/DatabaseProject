@@ -2,7 +2,7 @@
 using System.IO;
 using System.Windows;
 
-namespace FYP_MS.HelperClasses
+namespace FYP_Management.HelperClasses
 {
     internal class ViewModel: INotifyPropertyChanged
     {

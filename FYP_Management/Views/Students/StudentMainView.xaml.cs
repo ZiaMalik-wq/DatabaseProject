@@ -1,11 +1,11 @@
-﻿using FYP_MS.HelperClasses;
+﻿using FYP_Management.HelperClasses;
 using System;
 using System.Data;
 using System.Windows;
 using System.Windows.Controls;
 
 
-namespace FYP_MS.Views.Students
+namespace FYP_Management.Views.Students
 {
     public partial class StudentMainView : UserControl
     {

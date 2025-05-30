@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FYP_MS.HelperClasses
+namespace FYP_Management.HelperClasses
 {
     class Stu
     {

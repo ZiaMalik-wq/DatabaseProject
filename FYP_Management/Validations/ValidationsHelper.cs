@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 
-namespace FYP_MS.Validations1
+namespace FYP_Management.Validations1
 {
     public static class ValidationsHelper
     {

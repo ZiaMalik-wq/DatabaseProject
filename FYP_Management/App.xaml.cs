@@ -1,7 +1,8 @@
-﻿using System.Windows;
+﻿#nullable enable
+using System.Windows;
 using Microsoft.Extensions.Configuration;
 
-namespace FYP_MS
+namespace FYP_Management
 {
     /// <summary>
     /// Interaction logic for App.xaml
@@ -12,11 +13,9 @@ namespace FYP_MS
 
         public App()
         {
-           Config = new ConfigurationBuilder().
-                AddJsonFile("appsettings.json")
+            Config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
                 .Build();
         }
-
-
     }
 }

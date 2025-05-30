@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Security.Cryptography;
 
-namespace FYP_MS.HelperClasses
+namespace FYP_Management.HelperClasses
 {
     public static class Project_Helper
     {

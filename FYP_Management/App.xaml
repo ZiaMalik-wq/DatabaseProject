@@ -1,5 +1,5 @@
 ﻿<Application
-    x:Class="FYP_MS.App"
+    x:Class="FYP_Management.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     ShutdownMode="OnMainWindowClose"
@@ -9,45 +9,65 @@
         <SolidColorBrush x:Key="First Text Color" Color="#E9EFC0" />
         <SolidColorBrush x:Key="Second Text Color" Color="#B4E197" />
         <SolidColorBrush x:Key="Basic Text Color" Color="#000000" />
-        <SolidColorBrush x:Key="Theme Text Color" Color="#6bc76d" />
-        <SolidColorBrush x:Key="Light Theme Text Color" Color="#FFFFFF" />
-        <SolidColorBrush x:Key="Background Color" Color="#4E944F" />
+
+        <!--  NEW: Panel & Button Palette  -->
+        <SolidColorBrush x:Key="PanelBackgroundColor"       Color="#2F3E46"/>
+        <!-- dark slate -->
+        <SolidColorBrush x:Key="ButtonBaseColor"            Color="#52796F"/>
+        <!-- teal -->
+        <SolidColorBrush x:Key="ButtonHoverColor"           Color="#354F52"/>
+        <!-- darker teal -->
+        <SolidColorBrush x:Key="ButtonPressedColor"         Color="#1B263B"/>
+        <!-- navy-ish -->
+        <SolidColorBrush x:Key="ButtonDisabledOpacityColor" Color="#88FFFFFF"/>
+        <!-- half-alpha white for disabled text -->
+
+        <SolidColorBrush x:Key="Light Theme Text Color"     Color="#FFFFFF" />
+        <!-- remove the old Background Color if you like -->
+
+        <!-- Add the missing resource definition -->
+        <SolidColorBrush x:Key="Theme Text Color" Color="#FFFFFF" />
+        <SolidColorBrush x:Key="Background Color" Color="#2F3E46" />
 
         <!--  Global Window styling  -->
         <Style TargetType="Window">
-            <Setter Property="FontFamily" Value="Poppins" />
-            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontFamily" Value="Poppins"/>
+            <Setter Property="FontSize" Value="14"/>
         </Style>
 
-        <!--  Global TextBox style  -->
-        <Style TargetType="TextBox">
-            <Setter Property="Background" Value="White" />
-            <Setter Property="BorderBrush" Value="#CCC" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="Padding" Value="6,4" />
-            <Setter Property="MinHeight" Value="30" />
+        <!--  Enhanced Global Button style (Btntype1)  -->
+        <Style x:Key="Btntype1" TargetType="Button">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="{StaticResource ButtonBaseColor}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ButtonBaseColor}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="MinWidth" Value="100"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Cursor" Value="Hand"/>
+
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="TextBox">
-                        <Border
-                            x:Name="Bd"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="4">
-                            <ScrollViewer
-                                x:Name="PART_ContentHost"
-                                Margin="{TemplateBinding Padding}"
-                                Focusable="False"
-                                HorizontalScrollBarVisibility="Hidden"
-                                VerticalScrollBarVisibility="Hidden" />
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="18">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="BorderBrush" Value="#AAA" />
+                                <Setter TargetName="Bd" Property="Background"    Value="{StaticResource ButtonHoverColor}"/>
+                                <Setter TargetName="Bd" Property="BorderBrush"   Value="{StaticResource ButtonHoverColor}"/>
                             </Trigger>
-                            <Trigger Property="IsKeyboardFocused" Value="True">
-                                <Setter TargetName="Bd" Property="BorderBrush" Value="#4EA1F3" />
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background"    Value="{StaticResource ButtonPressedColor}"/>
+                                <Setter TargetName="Bd" Property="BorderBrush"   Value="{StaticResource ButtonPressedColor}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bd" Property="Opacity"       Value="0.6"/>
+                                <Setter Property="Foreground" Value="{StaticResource ButtonDisabledOpacityColor}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -55,25 +75,7 @@
             </Setter>
         </Style>
 
-        <!--  Global Button style (Btntype1)  -->
-        <Style x:Key="Btntype1" TargetType="Button">
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="Background" Value="{StaticResource Theme Text Color}" />
-            <Setter Property="Padding" Value="10,6" />
-            <Setter Property="MinWidth" Value="85" />
-            <Setter Property="MinHeight" Value="30" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="7">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!--  Other button styles from before  -->
+        <!--  Other button styles  -->
         <Style x:Key="cancelbtn" TargetType="Button">
             <Setter Property="Foreground" Value="{StaticResource First Text Color}" />
             <Setter Property="Padding" Value="10,5" />

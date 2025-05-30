@@ -1,8 +1,8 @@
 ﻿using System;
 using Microsoft.Data.SqlClient;
 using System.Data;
-using FYP_MS.Models;
-namespace FYP_MS.HelperClasses
+using FYP_Management.Models;
+namespace FYP_Management.HelperClasses
 {
     public static class Person_Helper
     {

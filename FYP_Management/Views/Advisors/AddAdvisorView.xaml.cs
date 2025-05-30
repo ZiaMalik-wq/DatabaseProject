@@ -1,11 +1,11 @@
-﻿using FYP_MS.HelperClasses;
-using FYP_MS.Validations1;
+﻿using FYP_Management.HelperClasses;
+using FYP_Management.Validations1;
 using System;
 using System.Windows;
 using System.Windows.Input;
-using FYP_MS.Models;
+using FYP_Management.Models;
 
-namespace FYP_MS.Views.Advisors;
+namespace FYP_Management.Views.Advisors;
 public partial class AddAdvisorView : Window
 {
     public AddAdvisorView()

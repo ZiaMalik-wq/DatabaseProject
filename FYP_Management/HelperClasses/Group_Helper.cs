@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Windows.Controls;
 
-namespace FYP_MS.HelperClasses
+namespace FYP_Management.HelperClasses
 {
     public static class Group_Helper
     {

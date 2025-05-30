@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FYP_MS.Properties
+namespace FYP_Management.Properties
 {
 
 

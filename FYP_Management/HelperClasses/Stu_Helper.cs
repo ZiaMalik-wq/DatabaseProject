@@ -2,7 +2,7 @@
 using System.Data;
 
 
-namespace FYP_MS.HelperClasses
+namespace FYP_Management.HelperClasses
 {
     public static class Stu_Helper
     {

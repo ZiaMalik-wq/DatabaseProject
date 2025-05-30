@@ -1,5 +1,5 @@
-﻿using FYP_MS.HelperClasses;
-using FYP_MS.Validations1;
+﻿using FYP_Management.HelperClasses;
+using FYP_Management.Validations1;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace FYP_MS
+namespace FYP_Management
 {
     /// <summary>
     /// Interaction logic for UpdateGroupEvaluation.xaml

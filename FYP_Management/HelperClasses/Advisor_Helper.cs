@@ -2,7 +2,7 @@
 using System;
 using System.Data;
 
-namespace FYP_MS.HelperClasses
+namespace FYP_Management.HelperClasses
 {
     public static class Advisor_Helper
     {

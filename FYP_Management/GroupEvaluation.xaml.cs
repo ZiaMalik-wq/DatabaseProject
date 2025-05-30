@@ -1,4 +1,4 @@
-﻿using FYP_MS.HelperClasses;
+﻿using FYP_Management.HelperClasses;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -16,7 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace FYP_MS
+namespace FYP_Management
 {
     /// <summary>
     /// Interaction logic for GroupEvaluation.xaml

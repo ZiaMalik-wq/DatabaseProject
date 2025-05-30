@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Linq;
 
-namespace FYP_MS.HelperClasses
+namespace FYP_Management.HelperClasses
 {
     public static class Evaluation_Helper
     {
