@@ -1,19 +1,10 @@
 ﻿using FYP_Management.HelperClasses;
+using FYP_Management.Views.Groups;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace FYP_Management
 {
@@ -25,29 +16,67 @@ namespace FYP_Management
         public GroupCRUD()
         {
             InitializeComponent();
-            loadData();
+            LoadData();
             Grid.Loaded += Grid_Loaded;
         }
 
         private void AddGroup_Click(object sender, RoutedEventArgs e)
         {
-            AddGrp addGrp = new AddGrp();
+            AddGrp addGrp = new();
             addGrp.ShowDialog();
-            loadData();
+            LoadData();
             
         }
-        private void loadData()
+        private void UpdateGroup_Click(object sender, RoutedEventArgs e)
+        {
+            // Ensure a group is selected in the grid
+            if (Grid.SelectedItem is not DataRowView row)
+            {
+                MessageBox.Show(
+                    "Please select a group to update.",
+                    "Alert",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning
+                );
+                return;
+            }
+
+            try
+            {
+                // Extract the GroupId (column 0) from the selected row
+                int groupId = Convert.ToInt32(row.Row[0]);
+
+                // Open the UpdateGroup window, passing the selected GroupId
+                var editWindow = new UpdateGroup(groupId);
+                editWindow.ShowDialog();
+
+                // After closing the edit window, refresh the main grid
+                LoadData();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Error opening Update Group window:\n" + ex.Message,
+                    "Alert",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
+            }
+        }
+
+
+        private void LoadData()
         {
             try
             {
-                Grid.ItemsSource = Group_Helper.getGroupDetails().DefaultView;
+                Grid.ItemsSource = Group_Helper.GetGroupDetails().DefaultView;
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error loading data from Database " + ex, "Alert", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }   
-        private void clearTxt_Click(object sender, RoutedEventArgs e)
+        private void ClearTxt_Click(object sender, RoutedEventArgs e)
         {
             SearchBar.Text = "";
         }
@@ -60,7 +89,7 @@ namespace FYP_Management
             // data changes as text changes
             if (SearchBar.Text == "")
             {
-                loadData();
+                LoadData();
             }
             else if (int.TryParse(SearchBar.Text.ToString(),out int indd))
             {
@@ -80,7 +109,7 @@ namespace FYP_Management
                 try
                 {
                     //  Get the selected group table from database
-                    StudentsGrid.ItemsSource = Group_Helper.GetStuFromGid(int.Parse(row.Row[0].ToString())).DefaultView;
+                    StudentsGrid.ItemsSource = Group_Helper.GetStudentsFromGroup(int.Parse(row.Row[0].ToString())).DefaultView;
                     StudentsGrid.Columns[0].Visibility = Visibility.Hidden;
                 }
                 catch (Exception ex)

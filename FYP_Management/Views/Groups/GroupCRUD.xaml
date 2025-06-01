@@ -20,7 +20,7 @@
             <Button
                 Width="70"
                 Margin="5"
-                Click="clearTxt_Click"
+                Click="ClearTxt_Click"
                 Content="Clear Text"
                 Style="{StaticResource Btntype1}" />
             <Button
@@ -32,6 +32,7 @@
             <Button
                 Width="100"
                 Margin="5"
+                Click="UpdateGroup_Click"
                 Content="Update Group"
                 Style="{StaticResource Btntype1}" />
         </WrapPanel>

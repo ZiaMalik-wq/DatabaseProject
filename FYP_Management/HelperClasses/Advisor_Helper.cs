@@ -68,26 +68,41 @@ namespace FYP_Management.HelperClasses
         /* ---------- LIGHT-WEIGHT LIST (id, name, designation, gender) ---------- */
         public static DataTable GetAdvisors(string term)
         {
-            const string sql =
-                @"SELECT p.Id, p.FirstName, p.LastName,
-                         lo.Value AS Designation,
-                         l.Value  AS Gender
-                  FROM   Advisor  a
-                  JOIN   Person   p  ON a.Id          = p.Id
-                  JOIN   Lookup   l  ON p.Gender      = l.Id
-                  JOIN   Lookup  lo  ON a.Designation = lo.Id
-                  WHERE  CONCAT(p.FirstName, p.LastName, p.Email,
-                                lo.Value, p.Contact) LIKE @filter";
-
             using var con = Config.GetConnection();
-            using var cmd = new SqlCommand(sql, con);
-            cmd.Parameters.AddWithValue("@filter", $"%{term}%");
+
+            using var cmd = new SqlCommand("dbo.GetAdvisors", con)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+
+            // Pass the raw term; the proc adds the '%' wild-cards.
+            cmd.Parameters.Add("@filter", SqlDbType.NVarChar, 200).Value =
+                string.IsNullOrWhiteSpace(term) ? string.Empty : term;
 
             using var da = new SqlDataAdapter(cmd);
             var dt = new DataTable();
             da.Fill(dt);
+
             return dt;
         }
+
+
+        public static DataTable GetIndustryAdvisors(string term)
+        {
+            using var con = Config.GetConnection();
+
+            using var cmd = new SqlCommand("dbo.GetIndustryAdvisor", con)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            cmd.Parameters.AddWithValue("@filter", term ?? string.Empty);
+            using var da = new SqlDataAdapter(cmd);
+            var dt = new DataTable();
+            da.Fill(dt);
+
+            return dt;
+        }
+
 
         /* ---------- ASSIGN ADVISOR TO PROJECT ---------- */
         public static void AssignAdvisor(int advisorId, int projectId, int advisorRole, DateTime assignedOn)

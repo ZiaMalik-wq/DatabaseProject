@@ -1,18 +1,8 @@
 ﻿using FYP_Management.HelperClasses;
 using FYP_Management.Validations1;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace FYP_Management
 {
@@ -49,24 +39,39 @@ namespace FYP_Management
             this.Close();
         }
 
-        private void donebtn_Click(object sender, RoutedEventArgs e)
+        private void Donebtn_Click(object sender, RoutedEventArgs e)
         {
-            if (validate())
+            if (!Validate()) return;  
+
+            try
             {
-                Evaluation_Helper.UpdateGroupEvaluation(GroupId, EvlId, int.Parse(ObtainedMarks.Text.ToString()), EvlDatepicker.SelectedDate.Value);
+                // safer numeric parse
+                if (!int.TryParse(ObtainedMarks.Text, out var marks))
+                {
+                    MessageBox.Show("Obtained Marks must be a whole number.",
+                                    "Validation", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+
+                Evaluation_Helper.UpdateGroupEvaluation(
+                    GroupId,
+                    EvlId,
+                    marks,
+                    EvlDatepicker.SelectedDate!.Value);
                 this.Close();
             }
+            catch (Exception ex)
+            {
+                // concise, user-friendly message
+                MessageBox.Show("Error saving data: " + ex.Message,
+                                "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
-        private bool validate()
+        private bool Validate()
         {
-            if(!int.TryParse(ObtainedMarks.Text.ToString(), out int u))
+            if (!int.TryParse(ObtainedMarks.Text.ToString(), out int u))
             {
                 MessageBox.Show("Marks must be integar.", "Alert", MessageBoxButton.OK, MessageBoxImage.Question);
-                return false;
-            }
-            if (int.Parse(ObtainedMarks.Text.ToString()) > int.Parse(TotalMarks.Text.ToString()))
-            {
-                MessageBox.Show("Obtained Marks cannot be more than Total Marks.", "Alert", MessageBoxButton.OK, MessageBoxImage.Question);
                 return false;
             }
             return true;

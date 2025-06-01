@@ -40,7 +40,7 @@ namespace FYP_Management
                 try
                 {
                     // Update the Project with values
-                    HelperClasses.Project_Helper.updateProject(Pid, TopicTxtBox.Text, DescriptionTextBox.Text);
+                    HelperClasses.Project_Helper.UpdateProject(Pid, TopicTxtBox.Text, DescriptionTextBox.Text);
                 }
                 catch (Exception ex)
                 {

@@ -24,19 +24,22 @@ namespace FYP_Management.HelperClasses
             con.Open();
             cmd.ExecuteNonQuery();
         }
-        public static void updateProject(int id, string title, string desc)
+        public static void UpdateProject(int id, string title, string desc)
         {
-            var con = Config.GetConnection();
+            using var con = Config.GetConnection();
+            using var cmd = new SqlCommand("dbo.UpdateProject", con)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+
+            cmd.Parameters.AddWithValue("@Id", id);
+            cmd.Parameters.AddWithValue("@Title", title);
+            cmd.Parameters.AddWithValue("@Description", desc);
+
             con.Open();
-            SqlCommand cmd = new SqlCommand("update Project set Title = @title , Description = @desc where id = @id", con);
-            cmd.Parameters.AddWithValue("title", title);
-            cmd.Parameters.AddWithValue("desc", desc);
-            cmd.Parameters.AddWithValue("id", id);
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataTable dt = new DataTable();
-            da.Fill(dt);
-            con.Close();
+            cmd.ExecuteNonQuery();
         }
+
         public static DataTable GetProjectTable()
         {
             var con = Config.GetConnection();

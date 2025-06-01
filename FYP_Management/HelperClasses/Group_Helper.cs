@@ -1,222 +1,263 @@
 ﻿using System;
-using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Security.Cryptography;
-using System.Windows.Controls;
+using Microsoft.Data.SqlClient;
 
 namespace FYP_Management.HelperClasses
 {
     public static class Group_Helper
     {
-        public static DataTable getGroupDetails()
+        public static DataTable GetGroupDetails()
         {
-            var con = Config.GetConnection();
-            con.Open();
-            using (DataTable dt = new DataTable("Groups"))
+            using var con = Config.GetConnection();
+            using var cmd = new SqlCommand("dbo.GetGroupDetails", con)
             {
-                using (SqlCommand cmd = new SqlCommand("Select id as [Group No],Created_On as [Creation Date] from [dbo].[group]", con))
-                {
-                    SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-                    adapter.Fill(dt);
-                }
-                return dt;
-            }
-        }
-        public static DataTable getGroupsNotAssignedProject()
-        {
-            var con = Config.GetConnection();
-            con.Open();
-            using (DataTable dt = new DataTable("Groups"))
-            {
-                using (SqlCommand cmd = new SqlCommand("Select id as [Group No],Created_On as [Creation Date] from [dbo].[group] where id not in (select GP.Groupid from GroupProject as GP)", con))
-                {
-                    SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-                    adapter.Fill(dt);
-                }
-                return dt;
-            }
-        }
-        public static DataTable SearchGroup(int num)
-        {
-            var con = Config.GetConnection();
-            con.Open();
-            using (DataTable dt = new DataTable("Groups"))
-            {
-                using (SqlCommand cmd = new SqlCommand("Select id as [Group No],Created_On as [Creation Date] from [dbo].[group] where id = @num", con))
-                {
-                    cmd.Parameters.AddWithValue("num", num);
+                CommandType = CommandType.StoredProcedure
+            };
 
-                    SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-                    adapter.Fill(dt);
-                }
-                return dt;
-            }
-        }
-        public static void addGroup(DateTime dtime)
-        {
-            var con = Config.GetConnection();
-            con.Open();
-            SqlCommand cmd = new SqlCommand("Insert into [dbo].[Group] values(@date)", con);
-            cmd.Parameters.AddWithValue("date", dtime);
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataTable dt = new DataTable();
+            using var da = new SqlDataAdapter(cmd);
+            var dt = new DataTable("Groups");
             da.Fill(dt);
-            con.Close();
+            return dt;
         }
-        public static int getLastGroupId()
+
+        public static DataTable GetGroupsNotAssignedProject()
         {
-            string insertSql = "SELECT MAX(ID) AS LastID FROM dbo.[Group]";
-            var con = Config.GetConnection();
-            con.Open();
-            SqlCommand cmd = new SqlCommand(insertSql, con);
-            int ans = Convert.ToInt32(cmd.ExecuteScalar());
-            con.Close();
-            return ans;
-        }
-        public static void addStuGroup(int Gid,int Sid , bool status ,DateTime dtime)
-        {
-            var con = Config.GetConnection();
-            con.Open();
-            SqlCommand cmd = new SqlCommand("Insert into GroupStudent values( @gid, @sid, @st, @dtim )", con);
-            cmd.Parameters.AddWithValue("gid", Gid);
-            cmd.Parameters.AddWithValue("sid", Sid);
-            cmd.Parameters.AddWithValue("st", status);
-            cmd.Parameters.AddWithValue("dtim", dtime);
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataTable dt = new DataTable();
+            using var con = Config.GetConnection();
+            using var cmd = new SqlCommand("dbo.GetGroupsNotAssignedProject", con)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+
+            using var da = new SqlDataAdapter(cmd);
+            var dt = new DataTable("Groups");
             da.Fill(dt);
-            con.Close();
+            return dt;
         }
-        public static DataTable GetStuFromGid(int Gid)
+
+        public static DataTable SearchGroup(int groupId)
         {
-            var con = Config.GetConnection();
-            con.Open();
-            using (DataTable dt = new DataTable("Student"))
+            using var con = Config.GetConnection();
+            using var cmd = new SqlCommand("dbo.SearchGroup", con)
             {
-                using (SqlCommand cmd = new SqlCommand("Select p.id,p.FirstName,p.LastName,s.RegistrationNo,p.Contact,p.Email " +
-                    "from student as s " +
-                    "join person as p on s.id = p.id " +
-                    "join lookup as l on p.gender = l.id " +
-                    "join GroupStudent as GS on GS.StudentId = P.Id " +
-                    "where GS.GroupId = @id ", con))
-                {
-                    cmd.Parameters.AddWithValue("id",Gid);
-                    SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-                    adapter.Fill(dt);
-                }
-                return dt;
-            }
-        }
-        public static DataTable GetUnEvaluated(string Evl)
-        {
-            var con = Config.GetConnection();
-            con.Open();
-            using (DataTable dt = new DataTable("Person"))
-            {
-                using (SqlCommand cmd = new SqlCommand("select * from [dbo].[group] where id not in ( select groupid from GroupEvaluation join Evaluation AS EVL on EVL.Id = GroupEvaluation.EvaluationId where EVL.Name like @EVL) and id in (select gp.GroupId from GroupProject GP) ", con))
-                {
-                    cmd.Parameters.AddWithValue("EVL", Evl);
-                    SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-                    adapter.Fill(dt);
-                }
-                return dt;
-            }
-        }
-        public static DataTable SearchUnEvaluated(string Evl, int id)
-        {
-            var con = Config.GetConnection();
-            con.Open();
-            using (DataTable dt = new DataTable())
-            {
-                using (SqlCommand cmd = new SqlCommand("select * from [dbo].[group] AS G where id not in ( select groupid from GroupEvaluation join Evaluation AS EVL on EVL.Id = GroupEvaluation.EvaluationId where EVL.Name like @EVL) and G.id = @id and id in (select gp.GroupId from GroupProject GP) ", con))
-                {
-                    cmd.Parameters.AddWithValue("EVL", Evl);
-                    cmd.Parameters.AddWithValue("id", id);
-                    SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-                    adapter.Fill(dt);
-                }
-                return dt;
-            }
-        }
-        public static DataTable GetEvaluated(string Evl)
-        {
-            var con = Config.GetConnection();
-            con.Open();
-            using (DataTable dt = new DataTable())
-            {
-                using (SqlCommand cmd = new SqlCommand("select * from [dbo].[group] where id in ( select groupid from GroupEvaluation join Evaluation AS EVL on EVL.Id = GroupEvaluation.EvaluationId where EVL.Name like @EVL) and id in (select gp.GroupId from GroupProject GP)", con))
-                {
-                    cmd.Parameters.AddWithValue("EVL", Evl);
-                    SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-                    adapter.Fill(dt);
-                }
-                return dt;
-            }
-        }
-        public static DataTable SearchEvaluated(string Evl, int id)
-        {
-            var con = Config.GetConnection();
-            con.Open();
-            using (DataTable dt = new DataTable("Person"))
-            {
-                using (SqlCommand cmd = new SqlCommand("select * from [dbo].[group] AS G where id in ( select groupid from GroupEvaluation join Evaluation AS EVL on EVL.Id = GroupEvaluation.EvaluationId where EVL.Name like @EVL) and G.id = @id and id in (select gp.GroupId from GroupProject GP) ", con))
-                {
-                    cmd.Parameters.AddWithValue("EVL", Evl);
-                    cmd.Parameters.AddWithValue("id", id);
-                    SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-                    adapter.Fill(dt);
-                }
-                return dt;
-            }
-        }
-        public static void AssignProject(int Gid,int Pid,DateTime dtime)
-        {
-            var con = Config.GetConnection();
-            con.Open();
-            SqlCommand cmd = new SqlCommand("Insert into GroupProject values(@PId , @Gid, @Dtime)", con);
-            cmd.Parameters.AddWithValue("Gid", Gid);
-            cmd.Parameters.AddWithValue("PId", Pid);
-            cmd.Parameters.AddWithValue("Dtime", dtime);
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataTable dt = new DataTable();
+                CommandType = CommandType.StoredProcedure
+            };
+            cmd.Parameters.AddWithValue("@GroupId", groupId);
+
+            using var da = new SqlDataAdapter(cmd);
+            var dt = new DataTable("Groups");
             da.Fill(dt);
+            return dt;
+        }
+
+        public static void AddGroup(DateTime createdOn)
+        {
+            using var con = Config.GetConnection();
+            using var cmd = new SqlCommand("dbo.AddGroup", con)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            cmd.Parameters.AddWithValue("@CreatedOn", createdOn);
+
+            con.Open();
+            cmd.ExecuteNonQuery();
             con.Close();
         }
-        public static DataTable getStudentNotInGroup(string str = "")
+
+        public static int GetLastGroupId()
         {
-            var con = Config.GetConnection();
-            con.Open();
-            using (DataTable dt = new DataTable("Person"))
+            using var con = Config.GetConnection();
+            using var cmd = new SqlCommand("dbo.GetLastGroupId", con)
             {
-                using (SqlCommand cmd = new SqlCommand("Select p.id,p.FirstName,p.LastName,s.RegistrationNo,p.Contact,p.Email " +
-                    "from student as s " +
-                    "join person as p on s.id = p.id " +
-                    "join lookup as l on p.gender = l.id " +
-                    "where FirstName + LastName + RegistrationNo + Email + l.value + contact like @str and p.id not in ( select GS.studentid from GroupStudent as GS where GS.status = 1)", con))
-                {
-                    cmd.Parameters.AddWithValue("str", string.Format("%{0}%", str));
-                    SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-                    adapter.Fill(dt);
-                }
-                return dt;
-            }
+                CommandType = CommandType.StoredProcedure
+            };
+
+            con.Open();
+            var result = cmd.ExecuteScalar();
+            con.Close();
+
+            return Convert.ToInt32(result);
         }
-        public static DataTable getGroupWithProjects()
+
+        public static void AddStudentToGroup(int groupId, int studentId, bool status, DateTime assignmentDate)
         {
-            var con = Config.GetConnection();
-            con.Open();
-            using (DataTable dt = new DataTable("Person"))
+            using var con = Config.GetConnection();
+            using var cmd = new SqlCommand("dbo.AddStudentToGroup", con)
             {
-                using (SqlCommand cmd = new SqlCommand("select * from GroupProject", con))
-                {
-                    SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-                    adapter.Fill(dt);
-                }
-                return dt;
+                CommandType = CommandType.StoredProcedure
+            };
+            cmd.Parameters.AddWithValue("@GroupId", groupId);
+            cmd.Parameters.AddWithValue("@StudentId", studentId);
+            cmd.Parameters.AddWithValue("@Status", status);
+            cmd.Parameters.AddWithValue("@AssignmentDate", assignmentDate);
+
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+        }
+
+        public static DataTable GetStudentsFromGroup(int groupId)
+        {
+            using var con = Config.GetConnection();
+            using var cmd = new SqlCommand("dbo.GetStudentsFromGroup", con)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            cmd.Parameters.AddWithValue("@GroupId", groupId);
+
+            using var da = new SqlDataAdapter(cmd);
+            var dt = new DataTable("Students");
+            da.Fill(dt);
+            return dt;
+        }
+
+        public static DataTable GetGroupsNotEvaluated(string evaluationNamePattern)
+        {
+            using var con = Config.GetConnection();
+            using var cmd = new SqlCommand("dbo.GetGroupsNotEvaluated", con)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            cmd.Parameters.AddWithValue("@EvalNamePattern", evaluationNamePattern);
+
+            using var da = new SqlDataAdapter(cmd);
+            var dt = new DataTable("Groups");
+            da.Fill(dt);
+            return dt;
+        }
+
+        public static DataTable SearchGroupsNotEvaluated(string evaluationNamePattern, int groupId)
+        {
+            using var con = Config.GetConnection();
+            using var cmd = new SqlCommand("dbo.SearchGroupsNotEvaluated", con)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            cmd.Parameters.AddWithValue("@EvalNamePattern", evaluationNamePattern);
+            cmd.Parameters.AddWithValue("@GroupId", groupId);
+
+            using var da = new SqlDataAdapter(cmd);
+            var dt = new DataTable("Groups");
+            da.Fill(dt);
+            return dt;
+        }
+
+        public static DataTable GetGroupsEvaluated(string evaluationNamePattern)
+        {
+            using var con = Config.GetConnection();
+            using var cmd = new SqlCommand("dbo.GetGroupsEvaluated", con)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            cmd.Parameters.AddWithValue("@EvalNamePattern", evaluationNamePattern);
+
+            using var da = new SqlDataAdapter(cmd);
+            var dt = new DataTable("Groups");
+            da.Fill(dt);
+            return dt;
+        }
+
+        public static DataTable SearchGroupsEvaluated(string evaluationNamePattern, int groupId)
+        {
+            using var con = Config.GetConnection();
+            using var cmd = new SqlCommand("dbo.SearchGroupsEvaluated", con)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            cmd.Parameters.AddWithValue("@EvalNamePattern", evaluationNamePattern);
+            cmd.Parameters.AddWithValue("@GroupId", groupId);
+
+            using var da = new SqlDataAdapter(cmd);
+            var dt = new DataTable("Groups");
+            da.Fill(dt);
+            return dt;
+        }
+
+        public static void AssignProjectToGroup(int groupId, int projectId, DateTime assignDate)
+        {
+            using var con = Config.GetConnection();
+            using var cmd = new SqlCommand("dbo.AssignProjectToGroup", con)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            cmd.Parameters.AddWithValue("@GroupId", groupId);
+            cmd.Parameters.AddWithValue("@ProjectId", projectId);
+            cmd.Parameters.AddWithValue("@AssignDate", assignDate);
+
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+        }
+
+        public static DataTable GetStudentsNotInAnyGroup(string searchTerm)
+        {
+            using var con = Config.GetConnection();
+            using var cmd = new SqlCommand("dbo.GetStudentsNotInAnyGroup", con)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            cmd.Parameters.AddWithValue("@SearchTerm", searchTerm);
+
+            using var da = new SqlDataAdapter(cmd);
+            var dt = new DataTable("Students");
+            da.Fill(dt);
+            return dt;
+        }
+
+        public static DataTable GetGroupWithProjects()
+        {
+            using var con = Config.GetConnection();
+            using var cmd = new SqlCommand("dbo.GetGroupWithProjects", con)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+
+            using var da = new SqlDataAdapter(cmd);
+            var dt = new DataTable("GroupProjects");
+            da.Fill(dt);
+            return dt;
+        }
+
+        public static void UpdateGroup(int groupId, DateTime createdOn)
+        {
+            using var con = Config.GetConnection();
+            using var cmd = new SqlCommand("dbo.UpdateGroup", con)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            cmd.Parameters.AddWithValue("@Id", groupId);
+            cmd.Parameters.AddWithValue("@CreatedOn", createdOn);
+
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+        }
+
+        public static void DeleteStudentFromGroup(int groupId, int studentId)
+        {
+            using var con = Config.GetConnection();
+            using var cmd = new SqlCommand("dbo.DeleteStudentFromGroup", con)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            cmd.Parameters.AddWithValue("@GroupId", groupId);
+            cmd.Parameters.AddWithValue("@StudentId", studentId);
+
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+        }
+
+        public static DataTable GetGroupDetailsWithMembers()
+        {
+            using (var con = Config.GetConnection())
+            using (var cmd = new SqlCommand("usp_GetGroupDetailsWithMembers", con))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                con.Open();
+                using var da = new SqlDataAdapter(cmd);
+                var dt = new DataTable();
+                da.Fill(dt);
+                return dt;  // or bind to your DataGrid
             }
         }
     }

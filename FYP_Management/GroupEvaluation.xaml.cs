@@ -59,11 +59,11 @@ namespace FYP_Management
                 {
                     if (int.TryParse(SearchBar.Text.ToString(), out int id))
                     {
-                        UnEvlGroupGrid.ItemsSource = Group_Helper.SearchUnEvaluated(EvaluationNamecmbox.SelectedValue.ToString(), int.Parse(SearchBar.Text.ToString())).DefaultView;
+                        UnEvlGroupGrid.ItemsSource = Group_Helper.SearchGroupsNotEvaluated(EvaluationNamecmbox.SelectedValue.ToString(), int.Parse(SearchBar.Text.ToString())).DefaultView;
                     }
                     else
                     {
-                        UnEvlGroupGrid.ItemsSource = Group_Helper.GetUnEvaluated(EvaluationNamecmbox.SelectedValue.ToString()).DefaultView;
+                        UnEvlGroupGrid.ItemsSource = Group_Helper.GetGroupsNotEvaluated(EvaluationNamecmbox.SelectedValue.ToString()).DefaultView;
                     }
                 }
             }
@@ -78,12 +78,12 @@ namespace FYP_Management
                 {
                     if (int.TryParse(SearchBar.Text.ToString(), out int id))
                     {
-                        EvlGroupGrid.ItemsSource = Group_Helper.SearchEvaluated(EvaluationNamecmbox.SelectedValue.ToString(), int.Parse(SearchBar.Text.ToString())).DefaultView;
+                        EvlGroupGrid.ItemsSource = Group_Helper.SearchGroupsEvaluated(EvaluationNamecmbox.SelectedValue.ToString(), int.Parse(SearchBar.Text.ToString())).DefaultView;
                     }
                     else
                     {
 
-                        EvlGroupGrid.ItemsSource = Group_Helper.GetEvaluated(EvaluationNamecmbox.SelectedValue.ToString()).DefaultView;
+                        EvlGroupGrid.ItemsSource = Group_Helper.GetGroupsEvaluated(EvaluationNamecmbox.SelectedValue.ToString()).DefaultView;
                     }
                 }
             }
@@ -162,7 +162,7 @@ namespace FYP_Management
             {
                 try
                 {
-                    GroupMembersGrid.ItemsSource = Group_Helper.GetStuFromGid(int.Parse(row.Row[0].ToString())).DefaultView;
+                    GroupMembersGrid.ItemsSource = Group_Helper.GetStudentsFromGroup(int.Parse(row.Row[0].ToString())).DefaultView;
                     StuGrid_Loaded();
                     EvaluationsDetailsGrid.ItemsSource = Evaluation_Helper.GetEvaluationFromGid(int.Parse(row.Row[0].ToString())).DefaultView;
                     EvlGrid_Loaded();
@@ -185,7 +185,7 @@ namespace FYP_Management
             {
                 try
                 {
-                    GroupMembersGrid.ItemsSource = Group_Helper.GetStuFromGid(int.Parse(row.Row[0].ToString())).DefaultView;
+                    GroupMembersGrid.ItemsSource = Group_Helper.GetStudentsFromGroup(int.Parse(row.Row[0].ToString())).DefaultView;
                     StuGrid_Loaded();
                     EvaluationsDetailsGrid.ItemsSource = Evaluation_Helper.GetEvaluationFromGid(int.Parse(row.Row[0].ToString())).DefaultView;
                     EvlGrid_Loaded();
@@ -209,7 +209,7 @@ namespace FYP_Management
             {
                 try
                 {
-                    GroupMembersGrid.ItemsSource = Group_Helper.GetStuFromGid(int.Parse(row.Row[0].ToString())).DefaultView;
+                    GroupMembersGrid.ItemsSource = Group_Helper.GetStudentsFromGroup(int.Parse(row.Row[0].ToString())).DefaultView;
                     StuGrid_Loaded();
                     EvaluationsDetailsGrid.ItemsSource = Evaluation_Helper.GetEvaluationFromGid(int.Parse(row.Row[0].ToString())).DefaultView;
                     EvlGrid_Loaded();
@@ -229,7 +229,7 @@ namespace FYP_Management
             {
                 try
                 {
-                    GroupMembersGrid.ItemsSource = Group_Helper.GetStuFromGid(int.Parse(row.Row[0].ToString())).DefaultView;
+                    GroupMembersGrid.ItemsSource = Group_Helper.GetStudentsFromGroup(int.Parse(row.Row[0].ToString())).DefaultView;
                     StuGrid_Loaded();
                     EvaluationsDetailsGrid.ItemsSource = Evaluation_Helper.GetEvaluationFromGid(int.Parse(row.Row[0].ToString())).DefaultView;
                     EvlGrid_Loaded();

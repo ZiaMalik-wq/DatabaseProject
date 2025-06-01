@@ -1,192 +1,185 @@
 ﻿using FYP_Management.HelperClasses;
 using System;
 using System.Data;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
-
 namespace FYP_Management
 {
-    /// <summary>
-    /// Interaction logic for AddAssignProject.xaml
-    /// </summary>
     public partial class AddAssignProject : Window
     {
+        private DataView _mainView = null!;
+        private DataView _coView = null!;
+        private DataView _indView = null!;
+
+        private int? _mainId, _coId, _indId;
+
         public AddAssignProject()
         {
             InitializeComponent();
-            loadData();
-            ProjectGrid.Loaded += Grid_Loaded;
             Datepicker.SelectedDate = DateTime.Now;
-        }
-        private void Grid_Loaded(object sender = null, RoutedEventArgs e = null)
-        {
-            try { ProjectGrid.Columns[0].Visibility = Visibility.Collapsed; } catch { }
-            try { MainAdvGrid.Columns[0].Visibility = Visibility.Collapsed; } catch { }
-            try { coAdvGrid.Columns[0].Visibility = Visibility.Collapsed; } catch { }
-            try { IndAdvGrid.Columns[0].Visibility = Visibility.Collapsed; } catch { }
-        }
-        private void loadData()
-        {
-            loadGroups();
-            loadProjects();
-            loadMainAdvisors();
-            loadCoAdvisors();
-            loadIndustryAdvisors();
-            Grid_Loaded();
-        }
-        private void loadGroups()
-        {
-            GroupGrid.ItemsSource = Group_Helper.getGroupsNotAssignedProject().DefaultView;
-            Grid_Loaded();
-        }
-        private void loadProjects()
-        {
-            ProjectGrid.ItemsSource = Project_Helper.GetProjectNotAssigned(SearchBar.Text).DefaultView;
-            Grid_Loaded();
 
-        }
-        private void loadMainAdvisors()
-        {
-            MainAdvGrid.ItemsSource = Advisor_Helper.GetAdvisors(searchMainAdvbox.Text).DefaultView;
-            Grid_Loaded();
-
-        }
-        private void loadCoAdvisors()
-        {
-            coAdvGrid.ItemsSource = Advisor_Helper.GetAdvisors(searchCoAdvbox.Text).DefaultView;
-            Grid_Loaded();
-
-        }
-        private void loadIndustryAdvisors()
-        {
-            IndAdvGrid.ItemsSource = Advisor_Helper.GetAdvisors(IndustryAdvSearchbox.Text).DefaultView;
-            Grid_Loaded();
-
-        }
-
-        private void SearchBar_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            loadProjects();
-            Grid_Loaded();
-
-        }
-
-        private void searchCoAdvbox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            loadCoAdvisors();
-            Grid_Loaded();
-
-        }
-
-        private void IndustryAdvSearchbox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            loadIndustryAdvisors();
-            Grid_Loaded();
-
-        }
-
-        private void searchMainAdvbox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            loadMainAdvisors();
-            Grid_Loaded();
-
-        }
-
-        private void AssignBtn_Click(object sender, RoutedEventArgs e)
-        {
-            if (validate())
+            foreach (var dg in new[]
             {
-                try
-                {
-                    // Assign Project from selected vales 
-                    DataRowView grow = GroupGrid.SelectedValue as DataRowView;
-                    DataRowView Prow = ProjectGrid.SelectedValue as DataRowView;
-                    Group_Helper.AssignProject(int.Parse(grow.Row[0].ToString()), int.Parse(Prow.Row[0].ToString()), Datepicker.SelectedDate.Value);
-                    // Assign Advisor to the Project Group
-                    DataRowView madv = MainAdvGrid.SelectedValue as DataRowView;
-                    Advisor_Helper.AssignAdvisor(int.Parse(madv.Row[0].ToString()), int.Parse(Prow.Row[0].ToString()), 11, DateTime.Now);
-                    DataRowView cadv = coAdvGrid.SelectedValue as DataRowView;
-                    Advisor_Helper.AssignAdvisor(int.Parse(cadv.Row[0].ToString()), int.Parse(Prow.Row[0].ToString()), 12, DateTime.Now);
-                    DataRowView iadv = IndAdvGrid.SelectedValue as DataRowView;
-                    Advisor_Helper.AssignAdvisor(int.Parse(iadv.Row[0].ToString()), int.Parse(Prow.Row[0].ToString()), 14, DateTime.Now);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-                this.Close();
+                GroupGrid, ProjectGrid, MainAdvGrid, coAdvGrid, IndAdvGrid,
+                GroupMembersGrid, SelectedProjectGrid, SelectedMainAdvGrid,
+                SelectedCoAdvGrid,  SelectedIndAdvGrid
+            })
+                dg.Loaded += (_, __) => HideFirstColumn((DataGrid)_);
 
+            LoadGroups();
+            LoadProjects();
+            LoadMainAdvisors();
+            LoadCoAdvisors();
+            LoadIndustryAdvisors();
+        }
+
+        /* ---------------- data loading ---------------- */
+        private void LoadGroups()
+        {
+            try { GroupGrid.ItemsSource = Group_Helper.GetGroupDetailsWithMembers().DefaultView; }
+            catch (Exception ex) { Alert("groups", ex); }
+        }
+        private void LoadProjects()
+        {
+            try { ProjectGrid.ItemsSource = Project_Helper.GetProjectNotAssigned(SearchBar.Text).DefaultView; }
+            catch (Exception ex) { Alert("projects", ex); }
+        }
+        private void LoadMainAdvisors()
+        {
+            try
+            {
+                _mainView = Advisor_Helper.GetAdvisors(searchMainAdvbox.Text).DefaultView;
+                MainAdvGrid.ItemsSource = _mainView;
+                ApplyAdvisorFilters();
+            }
+            catch (Exception ex) { Alert("main advisors", ex); }
+        }
+        private void LoadCoAdvisors()
+        {
+            try
+            {
+                _coView = Advisor_Helper.GetAdvisors(searchCoAdvbox.Text).DefaultView;
+                coAdvGrid.ItemsSource = _coView;
+                ApplyAdvisorFilters();
+            }
+            catch (Exception ex) { Alert("co-advisors", ex); }
+        }
+        private void LoadIndustryAdvisors()
+        {
+            try
+            {
+                _indView = Advisor_Helper.GetIndustryAdvisors(IndustryAdvSearchbox.Text).DefaultView;
+                IndAdvGrid.ItemsSource = _indView;
+                ApplyAdvisorFilters();
+            }
+            catch (Exception ex) { Alert("industry advisors", ex); }
+        }
+
+        /* ---------------- helpers ---------------- */
+        private static void Alert(string what, Exception ex) =>
+            MessageBox.Show($"Error loading {what}: {ex.Message}", "Alert",
+                            MessageBoxButton.OK, MessageBoxImage.Warning);
+
+        private static void HideFirstColumn(DataGrid dg)
+        {
+            if (dg.Columns.Count > 0) dg.Columns[0].Visibility = Visibility.Collapsed;
+        }
+
+        /* filters out IDs already selected for other roles */
+        private void ApplyAdvisorFilters()
+        {
+            Filter(_mainView, _coId, _indId);
+            Filter(_coView, _mainId, _indId);
+            Filter(_indView, _mainId, _coId);
+
+            static void Filter(DataView view, params int?[] exceptIds)
+            {
+                if (view == null) return;
+                string key = view.Table.Columns[0].ColumnName;           // first-column name
+                var ids = exceptIds.Where(id => id.HasValue).Select(id => id.Value);
+                view.RowFilter = ids.Any() ? string.Join(" AND ", ids.Select(id => $"{key} <> {id}"))
+                                           : string.Empty;
             }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        /* ---------------- search & clear ---------------- */
+        private void SearchBar_TextChanged(object s, TextChangedEventArgs e) => LoadProjects();
+        private void searchMainAdvbox_TextChanged(object s, TextChangedEventArgs e) => LoadMainAdvisors();
+        private void searchCoAdvbox_TextChanged(object s, TextChangedEventArgs e) => LoadCoAdvisors();
+        private void IndustryAdvSearchbox_TextChanged(object s, TextChangedEventArgs e) => LoadIndustryAdvisors();
+
+        private void Button_Click(object s, RoutedEventArgs e) => SearchBar.Text = "";
+        private void Button_Click_1(object s, RoutedEventArgs e) => searchMainAdvbox.Text = "";
+        private void Button_Click_2(object s, RoutedEventArgs e) => searchCoAdvbox.Text = "";
+        private void Button_Click_3(object s, RoutedEventArgs e) => IndustryAdvSearchbox.Text = "";
+
+        private void CloseBtn_Click(object s, RoutedEventArgs e) => Close();
+
+        /* ---------------- DataGrid selections ---------------- */
+        private void GroupGrid_SelectionChanged(object _, SelectionChangedEventArgs e)
         {
-            SearchBar.Text = "";
+            if (GroupGrid.SelectedItem is not DataRowView row) { GroupMembersGrid.ItemsSource = null; return; }
+            try { GroupMembersGrid.ItemsSource = Group_Helper.GetStudentsFromGroup(IntKey(row)).DefaultView; }
+            catch (Exception ex) { Alert("group members", ex); }
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void ProjectGrid_SelectionChanged(object s, SelectionChangedEventArgs e) => ShowOne(ProjectGrid, SelectedProjectGrid);
+        private void MainAdvGrid_SelectionChanged(object s, SelectionChangedEventArgs e) { _mainId = ShowOne(MainAdvGrid, SelectedMainAdvGrid); ApplyAdvisorFilters(); }
+        private void CoAdvGrid_SelectionChanged(object s, SelectionChangedEventArgs e) { _coId = ShowOne(coAdvGrid, SelectedCoAdvGrid); ApplyAdvisorFilters(); }
+        private void IndustryAdvGrid_SelectionChanged(object s, SelectionChangedEventArgs e) { _indId = ShowOne(IndAdvGrid, SelectedIndAdvGrid); ApplyAdvisorFilters(); }
+
+        private static int? ShowOne(DataGrid source, DataGrid target)
         {
-            searchMainAdvbox.Text = null;
+            if (source.SelectedItem is not DataRowView drv) { target.ItemsSource = null; return null; }
+            DataTable t = drv.Row.Table.Clone();
+            t.ImportRow(drv.Row);
+            target.ItemsSource = t.DefaultView;
+            HideFirstColumn(target);
+            return IntKey(drv);
         }
 
-        private void Button_Click_2(object sender, RoutedEventArgs e)
+        private static int IntKey(DataRowView drv) => Convert.ToInt32(drv.Row[0]);
+
+        /* ---------------- assign button ---------------- */
+        private void AssignBtn_Click(object s, RoutedEventArgs e)
         {
-            searchCoAdvbox.Text = null;
+            if (!ValidateSelections()) return;
+            try
+            {
+                int groupId = IntKey((DataRowView)GroupGrid.SelectedItem!);
+                int projectId = IntKey((DataRowView)ProjectGrid.SelectedItem!);
+
+                Group_Helper.AssignProjectToGroup(groupId, projectId, Datepicker.SelectedDate!.Value);
+                Advisor_Helper.AssignAdvisor(_mainId!.Value, projectId, 11, DateTime.Now);
+                Advisor_Helper.AssignAdvisor(_coId!.Value, projectId, 12, DateTime.Now);
+                Advisor_Helper.AssignAdvisor(_indId!.Value, projectId, 14, DateTime.Now);
+
+                Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error during assignment:\n{ex.Message}", "Error",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
-        private void Button_Click_3(object sender, RoutedEventArgs e)
+        private bool ValidateSelections()
         {
-            IndustryAdvSearchbox.Text = null;
-        }
-
-        private void CloseBtn_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
-        private bool validate()
-        {
-            DataRowView row = ProjectGrid.SelectedValue as DataRowView;
-            if (row == null)
-            {
-                MessageBox.Show("Please select a Value from Project Table.", "Alert", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-            row = GroupGrid.SelectedValue as DataRowView;
-            if (row == null)
-            {
-                MessageBox.Show("Please select a Group.", "Alert", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-            DataRowView madv = MainAdvGrid.SelectedValue as DataRowView;
-            if (madv == null)
-            {
-                MessageBox.Show("Please select Main Advisor.", "Alert", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-            DataRowView cadv = coAdvGrid.SelectedValue as DataRowView;
-            if (cadv == null)
-            {
-                MessageBox.Show("Please select Co Advisor.", "Alert", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-            DataRowView iadv = IndAdvGrid.SelectedValue as DataRowView;
-            if (iadv == null)
-            {
-                MessageBox.Show("Please select Industry Advisor.", "Alert", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-            if (madv.Row[0].ToString() == cadv.Row[0].ToString() || madv.Row[0].ToString() == iadv.Row[0].ToString())
-            {
-                MessageBox.Show("Two Advisors can not be same.", "Alert", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
+            if (ProjectGrid.SelectedItem == null) return Warn("a Project");
+            if (GroupGrid.SelectedItem == null) return Warn("a Group");
+            if (_mainId == null) return Warn("a Main Advisor");
+            if (_coId == null) return Warn("a Co-Advisor");
+            if (_indId == null) return Warn("an Industry Advisor");
             return true;
-        }
 
-        private void UpdateProjectBtn_Click_1(object sender, RoutedEventArgs e)
-        {
-
+            static bool Warn(string what)
+            {
+                MessageBox.Show($"Please select {what}.", "Alert",
+                                MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
         }
     }
 }

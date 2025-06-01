@@ -51,31 +51,45 @@ namespace FYP_Management
 
         private void donebtn_Click(object sender, RoutedEventArgs e)
         {
-            if(validate())
+            if (!Validate()) return;   // early-out if the form isn’t valid
+
+            try
             {
-                try
+                // safer numeric parse
+                if (!int.TryParse(ObtainedMarks.Text, out var marks))
                 {
-                    Evaluation_Helper.AddGroupEvaluation(GroupId, EvlId, int.Parse(ObtainedMarks.Text.ToString()), EvlDatepicker.SelectedDate.Value);
+                    MessageBox.Show("Obtained Marks must be a whole number.",
+                                    "Validation", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
                 }
-                catch(Exception ex)
-                {
-                    MessageBox.Show("Error Saving data into Database " + ex, "Alert", MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
+
+                Evaluation_Helper.AddGroupEvaluation(
+                    GroupId,
+                    EvlId,
+                    marks,
+                    EvlDatepicker.SelectedDate!.Value);
                 this.Close();
             }
+            catch (Exception ex)
+            {
+                // concise, user-friendly message
+                MessageBox.Show("Error saving data: " + ex.Message,
+                                "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
-        private bool validate()
+
+        private bool Validate()
         {
             if (!int.TryParse(ObtainedMarks.Text.ToString(), out int u))
             {
                 MessageBox.Show("Marks must be integar.", "Alert", MessageBoxButton.OK, MessageBoxImage.Question);
                 return false;
             }
-            if (int.Parse(ObtainedMarks.Text.ToString()) > int.Parse(TotalMarks.Text.ToString()))
-            {
-                MessageBox.Show("Obtained Marks cannot be more than Total Marks.", "Alert", MessageBoxButton.OK, MessageBoxImage.Question);
-                return false;
-            }
+            //if (int.Parse(ObtainedMarks.Text.ToString()) > int.Parse(TotalMarks.Text.ToString()))
+            //{
+            //    MessageBox.Show("Obtained Marks cannot be more than Total Marks.", "Alert", MessageBoxButton.OK, MessageBoxImage.Question);
+            //    return false;
+            //}
             return true;
         }
     }

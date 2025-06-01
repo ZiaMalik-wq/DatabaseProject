@@ -91,7 +91,7 @@
             Height="35"
             HorizontalAlignment="Center"
             VerticalAlignment="Top"
-            Click="donebtn_Click"
+            Click="Donebtn_Click"
             Content="Save"
             RenderTransformOrigin="0.681,-1.002"
             Style="{StaticResource donebtn}" />
