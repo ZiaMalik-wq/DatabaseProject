@@ -37,7 +37,7 @@ namespace FYP_Management.Views.Advisors
 
         private void Donebtn_Click(object sender, RoutedEventArgs e)
         {
-            if (validate())
+            if (Validate())
             {
                 try
                 {
@@ -54,7 +54,7 @@ namespace FYP_Management.Views.Advisors
             }
         }
 
-        private bool validate()
+        private bool Validate()
         {
             if (!ValidationsHelper.name(FirstName.Text) || !ValidationsHelper.name(LastName.Text))
             {

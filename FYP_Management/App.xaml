@@ -11,63 +11,64 @@
         <SolidColorBrush x:Key="Basic Text Color" Color="#000000" />
 
         <!--  NEW: Panel & Button Palette  -->
-        <SolidColorBrush x:Key="PanelBackgroundColor"       Color="#2F3E46"/>
-        <!-- dark slate -->
-        <SolidColorBrush x:Key="ButtonBaseColor"            Color="#52796F"/>
-        <!-- teal -->
-        <SolidColorBrush x:Key="ButtonHoverColor"           Color="#354F52"/>
-        <!-- darker teal -->
-        <SolidColorBrush x:Key="ButtonPressedColor"         Color="#1B263B"/>
-        <!-- navy-ish -->
-        <SolidColorBrush x:Key="ButtonDisabledOpacityColor" Color="#88FFFFFF"/>
-        <!-- half-alpha white for disabled text -->
+        <SolidColorBrush x:Key="PanelBackgroundColor" Color="#2F3E46" />
+        <!--  dark slate  -->
+        <SolidColorBrush x:Key="ButtonBaseColor" Color="#52796F" />
+        <!--  teal  -->
+        <SolidColorBrush x:Key="ButtonHoverColor" Color="#354F52" />
+        <!--  darker teal  -->
+        <SolidColorBrush x:Key="ButtonPressedColor" Color="#1B263B" />
+        <!--  navy-ish  -->
+        <SolidColorBrush x:Key="ButtonDisabledOpacityColor" Color="#88FFFFFF" />
+        <!--  half-alpha white for disabled text  -->
 
-        <SolidColorBrush x:Key="Light Theme Text Color"     Color="#FFFFFF" />
-        <!-- remove the old Background Color if you like -->
+        <SolidColorBrush x:Key="Light Theme Text Color" Color="#FFFFFF" />
+        <!--  remove the old Background Color if you like  -->
 
-        <!-- Add the missing resource definition -->
+        <!--  Add the missing resource definition  -->
         <SolidColorBrush x:Key="Theme Text Color" Color="#FFFFFF" />
         <SolidColorBrush x:Key="Background Color" Color="#2F3E46" />
 
         <!--  Global Window styling  -->
         <Style TargetType="Window">
-            <Setter Property="FontFamily" Value="Poppins"/>
-            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontFamily" Value="Poppins" />
+            <Setter Property="FontSize" Value="14" />
         </Style>
 
         <!--  Enhanced Global Button style (Btntype1)  -->
         <Style x:Key="Btntype1" TargetType="Button">
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Background" Value="{StaticResource ButtonBaseColor}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource ButtonBaseColor}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Height" Value="36"/>
-            <Setter Property="MinWidth" Value="100"/>
-            <Setter Property="Padding" Value="12,6"/>
-            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Background" Value="{StaticResource ButtonBaseColor}" />
+            <Setter Property="BorderBrush" Value="{StaticResource ButtonBaseColor}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Height" Value="36" />
+            <Setter Property="MinWidth" Value="100" />
+            <Setter Property="Padding" Value="12,6" />
+            <Setter Property="Cursor" Value="Hand" />
 
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="Bd"
-                    Background="{TemplateBinding Background}"
-                    BorderBrush="{TemplateBinding BorderBrush}"
-                    BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="18">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <Border
+                            x:Name="Bd"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="18">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="Background"    Value="{StaticResource ButtonHoverColor}"/>
-                                <Setter TargetName="Bd" Property="BorderBrush"   Value="{StaticResource ButtonHoverColor}"/>
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource ButtonHoverColor}" />
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource ButtonHoverColor}" />
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="Bd" Property="Background"    Value="{StaticResource ButtonPressedColor}"/>
-                                <Setter TargetName="Bd" Property="BorderBrush"   Value="{StaticResource ButtonPressedColor}"/>
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource ButtonPressedColor}" />
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource ButtonPressedColor}" />
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="Bd" Property="Opacity"       Value="0.6"/>
-                                <Setter Property="Foreground" Value="{StaticResource ButtonDisabledOpacityColor}"/>
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.6" />
+                                <Setter Property="Foreground" Value="{StaticResource ButtonDisabledOpacityColor}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>

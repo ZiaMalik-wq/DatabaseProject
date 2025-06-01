@@ -1,18 +1,7 @@
 ﻿using FYP_Management.HelperClasses;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace FYP_Management
 {
@@ -24,10 +13,10 @@ namespace FYP_Management
         public AssignProjectCRUD()
         {
             InitializeComponent();
-            loadData();
+            LoadData();
 
         }
-        private void loadData()
+        private void LoadData()
         {
             try
             {
@@ -38,14 +27,14 @@ namespace FYP_Management
                 MessageBox.Show("Error loading data from Database " + ex, "Alert", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
-        private void clearTxt_Click(object sender, RoutedEventArgs e)
+        private void ClearTxt_Click(object sender, RoutedEventArgs e)
         {
             SearchBar.Text = "";
         }
         private void SearchBar_TextChanged(object sender, TextChangedEventArgs e)
         {
             // data changes as text changes
-            loadData();
+            LoadData();
         }
 
         private void UpdateProjectDetail(object sender, RoutedEventArgs e)
@@ -56,7 +45,7 @@ namespace FYP_Management
         {
             AddAssignProject assignProject = new AddAssignProject();
             assignProject.ShowDialog();
-            loadData();
+            LoadData();
         }
     }
 }

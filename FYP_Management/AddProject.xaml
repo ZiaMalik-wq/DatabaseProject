@@ -71,7 +71,7 @@
             Height="35"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Click="donebtn_Click"
+            Click="Donebtn_Click"
             Content="Save"
             RenderTransformOrigin="0.681,-1.002"
             Style="{StaticResource donebtn}" />
@@ -83,7 +83,7 @@
             Height="35"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
-            Click="cancelBtn_Click"
+            Click="CancelBtn_Click"
             Content="Cancel"
             RenderTransformOrigin="0.681,-1.002"
             Style="{StaticResource cancelbtn}" />

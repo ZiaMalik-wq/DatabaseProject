@@ -12,18 +12,17 @@ namespace FYP_Management.HelperClasses
 {
     public static class Project_Helper
     {
-        public static void addProject(string title, string description)
+        public static void AddProject(string title, string description)
         {
-            MessageBox.Show("testing 2");
-            var con = Config.GetConnection();
+            using var con = Config.GetConnection();
+            using var cmd = new SqlCommand("dbo.AddProject", con)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            cmd.Parameters.AddWithValue("@Title", title);
+            cmd.Parameters.AddWithValue("@Description", description);
             con.Open();
-            SqlCommand cmd = new SqlCommand("Insert into Project values(@des,@title)", con);
-            cmd.Parameters.AddWithValue("title", title);
-            cmd.Parameters.AddWithValue("des", description);
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataTable dt = new DataTable();
-            da.Fill(dt);
-            con.Close();
+            cmd.ExecuteNonQuery();
         }
         public static void updateProject(int id, string title, string desc)
         {

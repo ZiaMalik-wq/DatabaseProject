@@ -1,17 +1,6 @@
 ﻿using FYP_Management.Validations1;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace FYP_Management
 {
@@ -25,28 +14,27 @@ namespace FYP_Management
             InitializeComponent();
         }
 
-        private void cancelBtn_Click(object sender, RoutedEventArgs e)
+        private void CancelBtn_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
 
-        private void donebtn_Click(object sender, RoutedEventArgs e)
+        private void Donebtn_Click(object sender, RoutedEventArgs e)
         {
-            if (validate())
+            if (Validate())
             {
                 try
                 {
-                    MessageBox.Show("testing");
-                    HelperClasses.Project_Helper.addProject(TopicTxtBox.Text, DescriptionTextBox.Text);
+                    HelperClasses.Project_Helper.AddProject(TopicTxtBox.Text, DescriptionTextBox.Text);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("There is an error while Adding Value to DataBase  111 " + ex, "Alert", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("There is an error while Adding Value to DataBase" + ex, "Alert", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 this.Close();
             }
         }
-        private bool validate()
+        private bool Validate()
         {
             if (!ValidationsHelper.name(TopicTxtBox.Text))
             {
