@@ -14,9 +14,9 @@ namespace FYP_Management
 
         public App()
         {
-            Config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .Build();
+            //Config = new ConfigurationBuilder()
+            //    .AddJsonFile("appsettings.json")
+            //    .Build();
         }
     }
 }
