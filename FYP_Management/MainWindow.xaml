@@ -6,7 +6,7 @@
     xmlns:uc="clr-namespace:FYP_Management.Views.Students"
     Title="Final Year Project Management System"
     Width="1250"
-    Height="540"
+    Height="600"
     MinWidth="800"
     MinHeight="400"
     Background="White"
@@ -154,6 +154,23 @@
                         Foreground="White"
                         Icon="LineChart" />
                     <TextBlock VerticalAlignment="Center" Text="Manage Group Evaluation" />
+                </StackPanel>
+            </Button>
+
+            <Button
+                x:Name="DashboardBtn"
+                Margin="10,5"
+                Click="DashboardBtn_Click"
+                Style="{StaticResource Btntype1}">
+                <StackPanel Orientation="Horizontal">
+                    <fa:IconBlock
+                        Width="16"
+                        Height="16"
+                        Margin="0,0,10,0"
+                        Foreground="White"
+                        Icon="ChartSimple" />
+                    <!--  Or ChartLine, ChartPie  -->
+                    <TextBlock VerticalAlignment="Center" Text="Dashboard / Reports" />
                 </StackPanel>
             </Button>
 

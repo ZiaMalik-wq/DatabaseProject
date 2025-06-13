@@ -8,40 +8,29 @@
 
 		<!-- ✅ THIS LINE FIXES YOUR INSTALLER -->
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		 <NoWarn>$(NoWarn);NU1701</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<Compile Remove="UpdateAssignProject.xaml.cs" />
+		<None Remove="Application - Shortcut.lnk" />
+		<None Remove="appsettings.json" />
+		<None Remove="Database\db_FYP.mdf" />
+		<None Remove="Database\db_FYP_log.ldf" />
 		<Page Remove="UpdateAssignProject.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Dapper" Version="2.1.66" />
-		<PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
-		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.5" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.5" />
-	</ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
 
-	<ItemGroup>
-		<Content Include="Database\db_FYP.mdf">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-			<Link>db_FYP.mdf</Link>
-		</Content>
-	</ItemGroup>
+    <!-- THIS IS THE ONLY CHARTING PACKAGE YOU NEED -->
+    <PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.0-rc5.4" />
 
-
-	<ItemGroup>
-		<Content Include="appsettings.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-	</ItemGroup>
-
-	
-
-	<ItemGroup>
-	  <Folder Include="Database\" />
-	</ItemGroup>
-
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.5" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.5" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+</ItemGroup>
 </Project>

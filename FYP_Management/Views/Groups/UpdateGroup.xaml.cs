@@ -225,7 +225,7 @@ namespace FYP_Management.Views.Groups
                 var toAdd = newStudentIds.Except(originalStudentIds);
                 foreach (var sid in toAdd)
                 {
-                    Group_Helper.AddStudentToGroup(_groupId, sid, true, DateTime.Now);
+                    Group_Helper.AddStudentToGroup(_groupId, sid, 3, DateTime.Now);
                 }
 
                 this.Close();

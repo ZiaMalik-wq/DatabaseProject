@@ -192,8 +192,8 @@ namespace FYP_Management
                     Group_Helper.AddStudentToGroup(
                         newGroupId,
                         s.id,
-                        true,               // status = true
-                        DateTime.Now        // assignment date = right now
+                        3,              
+                        DateTime.Now      
                     );
                 }
 

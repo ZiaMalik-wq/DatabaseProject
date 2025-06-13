@@ -1,7 +1,8 @@
 ﻿using FYP_Management.HelperClasses;
+using FYP_Management.Views;
+using FYP_Management.Views.Students;
 using System.Windows;
 using System.Windows.Controls;
-using FYP_Management.Views.Students;
 
 namespace FYP_Management
 {
@@ -59,6 +60,12 @@ namespace FYP_Management
             var groupEvl = new GroupEvaluation();
             mainField.Children.Clear();
             mainField.Children.Add(groupEvl);
+        }
+
+        private void DashboardBtn_Click(object sender, RoutedEventArgs e)
+        {
+            mainField.Children.Clear();
+            mainField.Children.Add(new DashboardContainerView());
         }
     }
 }

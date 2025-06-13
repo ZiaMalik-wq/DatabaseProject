@@ -78,7 +78,7 @@ namespace FYP_Management.HelperClasses
             return Convert.ToInt32(result);
         }
 
-        public static void AddStudentToGroup(int groupId, int studentId, bool status, DateTime assignmentDate)
+        public static void AddStudentToGroup(int groupId, int studentId, int status, DateTime assignmentDate)
         {
             using var con = Config.GetConnection();
             using var cmd = new SqlCommand("dbo.AddStudentToGroup", con)
@@ -259,6 +259,22 @@ namespace FYP_Management.HelperClasses
                 da.Fill(dt);
                 return dt;  // or bind to your DataGrid
             }
+        }
+
+        public static void AssignProjectToGroup(int groupId, int projectId, DateTime assignDate,
+                                        SqlConnection con, SqlTransaction tran)
+        {
+            // This method does NOT create its own connection. It uses the one provided.
+            using var cmd = new SqlCommand("dbo.AssignProjectToGroup", con, tran) // Associate command with transaction
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            cmd.Parameters.AddWithValue("@GroupId", groupId);
+            cmd.Parameters.AddWithValue("@ProjectId", projectId);
+            cmd.Parameters.AddWithValue("@AssignDate", assignDate);
+
+            // The calling method will handle opening/closing the connection and committing/rolling back.
+            cmd.ExecuteNonQuery();
         }
     }
 }

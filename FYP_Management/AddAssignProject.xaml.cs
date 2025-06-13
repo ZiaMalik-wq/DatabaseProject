@@ -146,22 +146,52 @@ namespace FYP_Management
         private void AssignBtn_Click(object s, RoutedEventArgs e)
         {
             if (!ValidateSelections()) return;
-            try
-            {
-                int groupId = IntKey((DataRowView)GroupGrid.SelectedItem!);
-                int projectId = IntKey((DataRowView)ProjectGrid.SelectedItem!);
 
-                Group_Helper.AssignProjectToGroup(groupId, projectId, Datepicker.SelectedDate!.Value);
-                Advisor_Helper.AssignAdvisor(_mainId!.Value, projectId, 11, DateTime.Now);
-                Advisor_Helper.AssignAdvisor(_coId!.Value, projectId, 12, DateTime.Now);
-                Advisor_Helper.AssignAdvisor(_indId!.Value, projectId, 14, DateTime.Now);
-
-                Close();
-            }
-            catch (Exception ex)
+            using (var conn = Config.GetConnection())
             {
-                MessageBox.Show($"Error during assignment:\n{ex.Message}", "Error",
-                                MessageBoxButton.OK, MessageBoxImage.Error);
+                conn.Open();
+                using (var transaction = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        int groupId = IntKey((DataRowView)GroupGrid.SelectedItem!);
+                        int projectId = IntKey((DataRowView)ProjectGrid.SelectedItem!);
+
+                        // --- Call the NEW, overloaded helper methods, passing the transaction ---
+
+                        // Call the new version of AssignProjectToGroup
+                        Group_Helper.AssignProjectToGroup(groupId, projectId, Datepicker.SelectedDate!.Value, conn, transaction);
+
+                        // Call the new versions of AssignAdvisor for each role
+                        // Note: I've added checks for `_coId` and `_indId` in case they are not selected.
+                        if (_mainId.HasValue)
+                        {
+                            Advisor_Helper.AssignAdvisor(_mainId.Value, projectId, 11, DateTime.Now, conn, transaction);
+                        }
+                        if (_coId.HasValue)
+                        {
+                            Advisor_Helper.AssignAdvisor(_coId.Value, projectId, 12, DateTime.Now, conn, transaction);
+                        }
+                        if (_indId.HasValue)
+                        {
+                            Advisor_Helper.AssignAdvisor(_indId.Value, projectId, 14, DateTime.Now, conn, transaction);
+                        }
+
+                        // If ALL commands succeeded without any errors (including from triggers),
+                        // then permanently save all the changes to the database.
+                        transaction.Commit();
+
+                        MessageBox.Show("Assignment successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                        Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+
+                        MessageBox.Show($"Error during assignment. The operation was cancelled and all changes have been undone.\n\nDetails: {ex.Message}",
+                                        "Operation Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
             }
         }
 

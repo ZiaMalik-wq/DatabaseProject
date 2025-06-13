@@ -134,5 +134,23 @@ namespace FYP_Management.HelperClasses
             con.Open();
             cmd.ExecuteNonQuery();
         }
+        public static void AssignAdvisor(int advisorId, int projectId, int advisorRole, DateTime assignedOn,
+                                 SqlConnection con, SqlTransaction tran)
+        {
+            const string sql =
+                @"INSERT INTO ProjectAdvisor (AdvisorId, ProjectId, AdvisorRole, AssignmentDate)
+          VALUES (@aid, @pid, @arole, @date)";
+
+            // This method does NOT create its own connection. It uses the one provided.
+            using var cmd = new SqlCommand(sql, con, tran); // Associate command with transaction
+
+            cmd.Parameters.AddWithValue("@aid", advisorId);
+            cmd.Parameters.AddWithValue("@pid", projectId);
+            cmd.Parameters.AddWithValue("@arole", advisorRole);
+            cmd.Parameters.AddWithValue("@date", assignedOn);
+
+            // The calling method handles everything else.
+            cmd.ExecuteNonQuery();
+        }
     }
 }
