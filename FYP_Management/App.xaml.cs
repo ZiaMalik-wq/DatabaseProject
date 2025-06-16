@@ -1,6 +1,7 @@
 ﻿using FYP_Management.HelperClasses;
 using System;
 using System.Windows;
+using QuestPDF.Infrastructure;
 
 namespace FYP_Management
 {
@@ -9,7 +10,7 @@ namespace FYP_Management
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-
+            QuestPDF.Settings.License = LicenseType.Community;
             // 1) Test DB
             TestDatabaseConnection();
 

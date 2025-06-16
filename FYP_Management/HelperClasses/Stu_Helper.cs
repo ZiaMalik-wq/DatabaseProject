@@ -43,6 +43,16 @@ namespace FYP_Management.HelperClasses
             con.Open();
             cmd.ExecuteNonQuery();
         }
+        public static bool IsStudentInGroup(int studentId)
+        {
+            using var con = Config.GetConnection();
+            con.Open();
+            using var cmd = new SqlCommand(
+                "SELECT 1 FROM GroupStudent WHERE StudentId = @id", con);
+            cmd.Parameters.AddWithValue("@id", studentId);
+            return cmd.ExecuteScalar() != null;
+        }
+
         public static DataTable GetStudentTable()
         {
             using var con = Config.GetConnection();

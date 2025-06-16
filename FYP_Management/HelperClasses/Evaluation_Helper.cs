@@ -1,150 +1,208 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Data;
 using Microsoft.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Xml.Linq;
 
 namespace FYP_Management.HelperClasses
 {
     public static class Evaluation_Helper
     {
-        public static DataTable GetEvaluations(string str="")
+        private static DataTable LoadDataTable(SqlCommand cmd)
         {
-            var con = Config.GetConnection();
-            SqlCommand cmd = new SqlCommand("Select * from Evaluation where name like @str", con);
-            cmd.Parameters.AddWithValue("str", string.Format("%{0}%", str));
-            DataTable dt = new DataTable();
-            con.Open();
-            SqlDataReader sdr = cmd.ExecuteReader();
-            dt.Load(sdr);
-            con.Close();
+            using var con = cmd.Connection;
+            if (con.State != ConnectionState.Open) con.Open();
+
+            using var rdr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+            var dt = new DataTable();
+            dt.Load(rdr);
             return dt;
         }
-        public static void insertEvaluation(string name,int totalM,int tWeightage)
+
+        private static int ToInt32OrZero(object? value) =>
+            value == null || value == DBNull.Value ? 0 : Convert.ToInt32(value);
+
+        public static DataTable GetEvaluations(string str = "")
         {
             var con = Config.GetConnection();
-            con.Open();
-            SqlCommand cmd = new SqlCommand("insert into evaluation values(@name,@tot,@weight)", con);
-            cmd.Parameters.AddWithValue("name", name);
-            cmd.Parameters.AddWithValue("tot", totalM);
-            cmd.Parameters.AddWithValue("weight", tWeightage);
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataTable dt = new DataTable();
-            da.Fill(dt);
-            con.Close();
+            using var cmd = new SqlCommand(
+                "SELECT * FROM Evaluation WHERE Name LIKE @str", con);
+            cmd.Parameters.AddWithValue("@str", $"%{str}%");
+
+            return LoadDataTable(cmd);
         }
-        
-        public static void UpdateEvaluation(string name,int totalM,int tWeightage,int id)
+
+        public static void insertEvaluation(string name, int totalM, int tWeightage)
+        {
+            int currentSum = GetAssigedPercentageEvaluations();
+            if (currentSum + tWeightage > 100)
+                throw new InvalidOperationException(
+                    $"Cannot insert: weightage would reach {currentSum + tWeightage} (>-100).");
+
+            using var con = Config.GetConnection();
+            con.Open();
+            using var cmd = new SqlCommand(
+                "INSERT INTO Evaluation (Name, TotalMarks, TotalWeightage) " +
+                "VALUES (@name, @tot, @weight)", con);
+
+            cmd.Parameters.AddWithValue("@name", name);
+            cmd.Parameters.AddWithValue("@tot", totalM);
+            cmd.Parameters.AddWithValue("@weight", tWeightage);
+
+            cmd.ExecuteNonQuery();
+        }
+
+        public static void UpdateEvaluation(string name, int totalM, int tWeightage, int id)
+        {
+            using var con = Config.GetConnection();
+            con.Open();
+
+            int currentSum;
+            int oldWeightage;
+
+            using (var cmdSum = new SqlCommand(
+                       "SELECT SUM(TotalWeightage) FROM Evaluation", con))
+                currentSum = ToInt32OrZero(cmdSum.ExecuteScalar());
+
+            using (var cmdOld = new SqlCommand(
+                       "SELECT TotalWeightage FROM Evaluation WHERE Id = @id", con))
+            {
+                cmdOld.Parameters.AddWithValue("@id", id);
+                oldWeightage = ToInt32OrZero(cmdOld.ExecuteScalar());
+            }
+
+            /* — 2. Simulate new total — */
+            int prospectiveTotal = currentSum - oldWeightage + tWeightage;
+            if (prospectiveTotal > 100)
+                throw new InvalidOperationException(
+                    $"Cannot update: total weightage would become {prospectiveTotal} (>-100).");
+
+            /* — 3. Safe to update — */
+            using var cmd = new SqlCommand(
+                @"UPDATE Evaluation
+                     SET Name          = @name,
+                         TotalMarks    = @tot,
+                         TotalWeightage = @weight
+                   WHERE Id = @id", con);
+
+            cmd.Parameters.AddWithValue("@name", name);
+            cmd.Parameters.AddWithValue("@tot", totalM);
+            cmd.Parameters.AddWithValue("@weight", tWeightage);
+            cmd.Parameters.AddWithValue("@id", id);
+
+            cmd.ExecuteNonQuery();
+        }
+
+        public static DataTable GetEvaluationFromGid(int Gid)
         {
             var con = Config.GetConnection();
-            con.Open();
-            SqlCommand cmd = new SqlCommand("update Evaluation set Name= @name , TotalMarks = @tot ,TotalWeightage = @weight where id = @id ", con);
-            cmd.Parameters.AddWithValue("name", name);
-            cmd.Parameters.AddWithValue("tot", totalM);
-            cmd.Parameters.AddWithValue("weight", tWeightage);
-            cmd.Parameters.AddWithValue("id", id);
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataTable dt = new DataTable();
-            da.Fill(dt);
-            con.Close();
+            using var cmd = new SqlCommand(@"
+                SELECT  E.Id,
+                        GE.GroupId,
+                        E.Name,
+                        GE.ObtainedMarks,
+                        E.TotalMarks,
+                        E.TotalWeightage,
+                        GE.EvaluationDate
+                FROM    Evaluation       E
+                JOIN    GroupEvaluation  GE ON E.Id = GE.EvaluationId
+                WHERE   GE.GroupId = @gid", con);
+
+            cmd.Parameters.AddWithValue("@gid", Gid);
+            return LoadDataTable(cmd);
         }
-        public static DataTable GetEvaluationFromGid (int Gid)
-        {
-            var con = Config.GetConnection();
-            SqlCommand cmd = new SqlCommand("select E.Id,GE.GroupId, E.Name, GE.ObtainedMarks, E.TotalMarks, E.TotalWeightage,GE.EvaluationDate from Evaluation E join GroupEvaluation GE on E.Id = GE.EvaluationId where GE.GroupId = @Gid", con);
-            cmd.Parameters.AddWithValue("Gid", Gid);
-            DataTable dt = new DataTable();
-            con.Open();
-            SqlDataReader sdr = cmd.ExecuteReader();
-            dt.Load(sdr);
-            con.Close();
-            return dt;
-        }
+
         public static List<string> getEvaluationName()
         {
-            var con = Config.GetConnection();
-            SqlCommand cmd = new SqlCommand("select name from Evaluation", con);
-            DataTable dt = new DataTable();
+            var names = new List<string>();
+
+            using var con = Config.GetConnection();
             con.Open();
-            SqlDataReader sdr = cmd.ExecuteReader();
-            List<string> list = new List<string>();
-            while (sdr.Read())
-            {
-                string gender = sdr.GetString(0);
-                list.Add(gender);
-            }
-            con.Close();
-            return list;
+            using var cmd = new SqlCommand(
+                "SELECT Name FROM Evaluation", con);
+            using var rdr = cmd.ExecuteReader();
+
+            while (rdr.Read())
+                names.Add(rdr.GetString(0));
+
+            return names;
         }
+
         public static int GetEvaluationIndex(int index)
         {
-            var con = Config.GetConnection();
-            SqlCommand cmd = new SqlCommand("select id from Evaluation", con);
-            DataTable dt = new DataTable();
+            var ids = new List<int>();
+
+            using var con = Config.GetConnection();
             con.Open();
-            SqlDataReader sdr = cmd.ExecuteReader();
-            List<int> list = new List<int>();
-            while (sdr.Read())
-            {
-                int val = sdr.GetInt32(0);
-                list.Add(val);
-            }
-            con.Close();
-            return list[index];
+            using var cmd = new SqlCommand(
+                "SELECT Id FROM Evaluation ORDER BY Id", con);
+            using var rdr = cmd.ExecuteReader();
+
+            while (rdr.Read())
+                ids.Add(rdr.GetInt32(0));
+
+            if (index < 0 || index >= ids.Count)
+                throw new ArgumentOutOfRangeException(nameof(index),
+                    "Index is outside the bounds of the Evaluation list.");
+
+            return ids[index];
         }
+
         public static void AddGroupEvaluation(int GId, int EId, int OMarks, DateTime dtime)
         {
-            var con = Config.GetConnection();
+            using var con = Config.GetConnection();
             con.Open();
-            SqlCommand cmd = new SqlCommand("insert into Groupevaluation values(@gid,@eid,@omarks, @dtime)", con);
-            cmd.Parameters.AddWithValue("gid", GId);
-            cmd.Parameters.AddWithValue("eid", EId);
-            cmd.Parameters.AddWithValue("omarks", OMarks);
-            cmd.Parameters.AddWithValue("dtime", dtime);
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataTable dt = new DataTable();
-            da.Fill(dt);
-            con.Close();
+            using var cmd = new SqlCommand(
+                @"INSERT INTO GroupEvaluation
+                     (GroupId, EvaluationId, ObtainedMarks, EvaluationDate)
+                  VALUES (@gid, @eid, @omarks, @dtime)", con);
+
+            cmd.Parameters.AddWithValue("@gid", GId);
+            cmd.Parameters.AddWithValue("@eid", EId);
+            cmd.Parameters.AddWithValue("@omarks", OMarks);
+            cmd.Parameters.AddWithValue("@dtime", dtime);
+
+            cmd.ExecuteNonQuery();
         }
+
         public static void UpdateGroupEvaluation(int GId, int EId, int OMarks, DateTime dtime)
         {
-            var con = Config.GetConnection();
+            using var con = Config.GetConnection();
             con.Open();
-            SqlCommand cmd = new SqlCommand("Update GroupEvaluation set obtainedmarks = @omarks , evaluationDate = @dtime where groupid = @gid and Evaluationid = @eid", con);
-            cmd.Parameters.AddWithValue("gid", GId);
-            cmd.Parameters.AddWithValue("eid", EId);
-            cmd.Parameters.AddWithValue("dtime", dtime);
-            cmd.Parameters.AddWithValue("omarks", OMarks);
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataTable dt = new DataTable();
-            da.Fill(dt);
-            con.Close();
+            using var cmd = new SqlCommand(
+                @"UPDATE GroupEvaluation
+                     SET ObtainedMarks = @omarks,
+                         EvaluationDate = @dtime
+                   WHERE GroupId      = @gid
+                     AND EvaluationId = @eid", con);
+
+            cmd.Parameters.AddWithValue("@gid", GId);
+            cmd.Parameters.AddWithValue("@eid", EId);
+            cmd.Parameters.AddWithValue("@omarks", OMarks);
+            cmd.Parameters.AddWithValue("@dtime", dtime);
+
+            cmd.ExecuteNonQuery();
         }
+
         public static string GetTotalMarksofEvaluation(int Eid)
         {
-            var con = Config.GetConnection();
-            SqlCommand cmd = new SqlCommand($"select TotalMarks from Evaluation where id = {Eid}", con);
+            using var con = Config.GetConnection();
             con.Open();
-            int id = (int)cmd.ExecuteScalar();
-            con.Close();
-            return id.ToString();
+            using var cmd = new SqlCommand(
+                "SELECT TotalMarks FROM Evaluation WHERE Id = @id", con);
+            cmd.Parameters.AddWithValue("@id", Eid);
+
+            return ToInt32OrZero(cmd.ExecuteScalar()).ToString();
         }
+
         public static int GetAssigedPercentageEvaluations()
         {
-            var con = Config.GetConnection();
-            SqlCommand cmd = new SqlCommand("select sum(totalweightage) from Evaluation ", con);
+            using var con = Config.GetConnection();
             con.Open();
-            var id = cmd.ExecuteScalar();
-            con.Close();
-            if(int.TryParse(id.ToString(),out int sum))
-            {
-                return sum;
-            }
-            return 0;
+            using var cmd = new SqlCommand(
+                "SELECT SUM(TotalWeightage) FROM Evaluation", con);
+
+            return ToInt32OrZero(cmd.ExecuteScalar());
         }
     }
 }

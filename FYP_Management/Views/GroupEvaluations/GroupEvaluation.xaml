@@ -28,7 +28,7 @@
                     x:Name="ClearBtn"
                     Width="70"
                     Margin="5"
-                    Click="clearTxt_Click"
+                    Click="ClearTxt_Click"
                     Content="Clear Text"
                     Style="{StaticResource Btntype1}" />
             </StackPanel>

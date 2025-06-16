@@ -35,6 +35,13 @@
                 Click="UpdateGroup_Click"
                 Content="Update Group"
                 Style="{StaticResource Btntype1}" />
+            <Button
+                Width="125"
+                Margin="5"
+                Click="GenerateReport_Click"
+                Content="Generate PDF Report"
+                Style="{StaticResource Btntype1}"/>
+
         </WrapPanel>
         <DataGrid
             x:Name="Grid"

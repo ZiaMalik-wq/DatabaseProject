@@ -184,7 +184,7 @@
                         Foreground="White"
                         Icon="ChartSimple" />
                     <!--  Or ChartLine, ChartPie  -->
-                    <TextBlock VerticalAlignment="Center" Text="Dashboard / Reports" />
+                    <TextBlock VerticalAlignment="Center" Text="Analytics/Reports" />
                 </StackPanel>
             </Button>
 
