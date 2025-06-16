@@ -60,7 +60,7 @@ namespace FYP_Management.Validations1
         {
             return (ch >= '0' && ch <= '9');
         }
-        public static bool greaterThanZero(int num)
+        public static bool GreaterThanZero(int num)
         {
             return num > 0;
         }

@@ -30,19 +30,6 @@
                 </StackPanel>
             </Button>
 
-            <!--  Button for the second chart  -->
-            <Button Margin="5" Style="{StaticResource Btntype1}">
-                <StackPanel Orientation="Horizontal">
-                    <fa:IconBlock
-                        Margin="0,0,6,0"
-                        Foreground="White"
-                        Icon="ChartPie" />
-                    <TextBlock VerticalAlignment="Center" Text="Project Status" />
-                </StackPanel>
-            </Button>
-
-            <!--  Add more buttons here for future charts  -->
-
             <Button
                 Margin="5"
                 Click="StudentGenderBtn_Click"

@@ -1,20 +1,9 @@
 ﻿using FYP_Management.HelperClasses;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Automation.Peers;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace FYP_Management
 {
@@ -29,7 +18,7 @@ namespace FYP_Management
             EvaluationNamecmbox.ItemsSource = Evaluation_Helper.getEvaluationName();
             EvaluationNamecmbox.SelectedIndex = 0;
             loadUnEvaluatedGroup();
-            loadEvaluatedGroup();
+            LoadEvaluatedGroup();
         }
 
         private void SearchBar_TextChanged(object sender, TextChangedEventArgs e)
@@ -38,7 +27,7 @@ namespace FYP_Management
             loadUnEvaluatedGroup();
         }
 
-        private void clearTxt_Click(object sender, RoutedEventArgs e)
+        private void ClearTxt_Click(object sender, RoutedEventArgs e)
         {
             SearchBar.Text = null;
         }
@@ -47,7 +36,7 @@ namespace FYP_Management
         {
             // Load Groups with specific Evaluation
             loadUnEvaluatedGroup();
-            loadEvaluatedGroup();
+            LoadEvaluatedGroup();
             EvaluationsDetailsGrid.ItemsSource = null;
             GroupMembersGrid.ItemsSource = null;
         }
@@ -70,7 +59,7 @@ namespace FYP_Management
             catch {}
             
         }
-        private void loadEvaluatedGroup()
+        private void LoadEvaluatedGroup()
         {
             try
             {
@@ -116,7 +105,7 @@ namespace FYP_Management
                     // Evaluate Group Window
                     AddGroupEvaluation addGroupEvaluation = new AddGroupEvaluation(int.Parse(row.Row[0].ToString()), Evaluation_Helper.GetEvaluationIndex(EvaluationNamecmbox.SelectedIndex), EvaluationNamecmbox.SelectedValue.ToString());
                     addGroupEvaluation.ShowDialog();
-                    loadEvaluatedGroup();
+                    LoadEvaluatedGroup();
                     loadUnEvaluatedGroup();
                     GroupMembersGrid.ItemsSource = null;
                     EvaluationsDetailsGrid.ItemsSource = null;
@@ -142,7 +131,7 @@ namespace FYP_Management
                     //Update the Group Evaluation Details Window
                     UpdateGroupEvaluation updateGroupEvaluation = new UpdateGroupEvaluation(int.Parse(row.Row[1].ToString()), int.Parse(row.Row[0].ToString()), EvaluationNamecmbox.SelectedValue.ToString(), int.Parse(row.Row[3].ToString()) , (DateTime)row.Row[6]);
                     updateGroupEvaluation.ShowDialog();
-                    loadEvaluatedGroup();
+                    LoadEvaluatedGroup();
                     loadUnEvaluatedGroup();
                     EvlGroupGrid_SelectedCellsChanged();
                     GroupMembersGrid.ItemsSource = null;

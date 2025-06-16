@@ -1,19 +1,9 @@
 ﻿using FYP_Management.HelperClasses;
 using FYP_Management.Validations1;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+
 
 namespace FYP_Management
 {
@@ -42,9 +32,9 @@ namespace FYP_Management
             this.Close();
         }
 
-        private void donebtn_Click(object sender, RoutedEventArgs e)
+        private void Donebtn_Click(object sender, RoutedEventArgs e)
         {
-            if (validate())
+            if (Validate())
             {
                 try
                 {
@@ -57,26 +47,44 @@ namespace FYP_Management
                 this.Close();
             }
         }
-        private bool validate()
+        private bool Validate()
         {
+            // ――― basic field checks ―――
             if (!ValidationsHelper.name(EvlName.Text))
             {
-                MessageBox.Show("Name should atleast be 3 characters", "Alert", MessageBoxButton.OK, MessageBoxImage.Question);
+                MessageBox.Show("Name should be at least 3 characters.",
+                                "Alert", MessageBoxButton.OK, MessageBoxImage.Question);
                 return false;
             }
-            if (!ValidationsHelper.greaterThanZero(int.Parse(TotalMarks.Text)))
+
+            if (!ValidationsHelper.GreaterThanZero(int.Parse(TotalMarks.Text)))
             {
-                MessageBox.Show("Marks Must be a postive Number.", "Alert", MessageBoxButton.OK, MessageBoxImage.Question);
+                MessageBox.Show("Marks must be a positive number.",
+                                "Alert", MessageBoxButton.OK, MessageBoxImage.Question);
                 return false;
             }
-            int value = int.Parse(WeightAgetxtbox.Text.ToString());
-            int taken_percent = Evaluation_Helper.GetAssigedPercentageEvaluations();
-            if (value + taken_percent > 100)
+
+            // ――― weightage guard ―――
+            if (!int.TryParse(WeightAgetxtbox.Text, out int newWeightage) || newWeightage <= 0)
             {
-                MessageBox.Show($"Total percentage will become {value + taken_percent}. Please Select value less than {100 - taken_percent}.", "Alert", MessageBoxButton.OK, MessageBoxImage.Question);
+                MessageBox.Show("Weightage must be a positive number.",
+                                "Alert", MessageBoxButton.OK, MessageBoxImage.Question);
                 return false;
             }
+
+            int currentSum = Evaluation_Helper.GetAssigedPercentageEvaluations();
+            int prospectiveTotal = currentSum + newWeightage;                
+
+            if (prospectiveTotal > 100)
+            {
+                MessageBox.Show($"Total weightage cannot exceed 100 %. " +
+                                $"Adding {newWeightage}% would bring the total to {prospectiveTotal}%.",
+                                "Alert", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
             return true;
         }
+
     }
 }

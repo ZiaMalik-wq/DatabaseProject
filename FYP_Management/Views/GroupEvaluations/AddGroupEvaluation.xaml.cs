@@ -1,19 +1,8 @@
 ﻿using FYP_Management.HelperClasses;
 using FYP_Management.Validations1;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace FYP_Management
 {
@@ -85,11 +74,6 @@ namespace FYP_Management
                 MessageBox.Show("Marks must be integar.", "Alert", MessageBoxButton.OK, MessageBoxImage.Question);
                 return false;
             }
-            //if (int.Parse(ObtainedMarks.Text.ToString()) > int.Parse(TotalMarks.Text.ToString()))
-            //{
-            //    MessageBox.Show("Obtained Marks cannot be more than Total Marks.", "Alert", MessageBoxButton.OK, MessageBoxImage.Question);
-            //    return false;
-            //}
             return true;
         }
     }

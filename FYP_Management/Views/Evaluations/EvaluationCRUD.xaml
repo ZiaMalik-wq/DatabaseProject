@@ -58,7 +58,7 @@
                 CanUserResizeRows="False"
                 ColumnWidth="*"
                 IsReadOnly="True"
-                MouseDoubleClick="UpdateEvlBtnClick"
+                MouseDoubleClick=" UpdateEvlBtnClick"
                 RowBackground="LightYellow" />
         </Grid>
     </DockPanel>

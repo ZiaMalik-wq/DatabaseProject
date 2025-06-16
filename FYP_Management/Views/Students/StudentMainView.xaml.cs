@@ -85,8 +85,14 @@ namespace FYP_Management.Views.Students
                                 MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-
             int id = Convert.ToInt32(row.Row["id"]);
+            if (Stu_Helper.IsStudentInGroup(id))
+            {
+                MessageBox.Show("Cannot delete: this student is still assigned to a group.",
+                                "Blocked", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             var confirm = MessageBox.Show(
                 "Are you sure you want to delete this student?\n" +
                 "This will also remove any group assignments.",

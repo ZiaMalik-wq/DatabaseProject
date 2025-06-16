@@ -1,16 +1,17 @@
-﻿using FYP_Management.HelperClasses;
+﻿using FYP_Management.Documents;
+using FYP_Management.HelperClasses;
 using FYP_Management.Views.Groups;
+using Microsoft.Win32;
+using QuestPDF.Fluent;
 using System;
 using System.Data;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace FYP_Management
 {
-    /// <summary>
-    /// Interaction logic for GroupCRUD.xaml
-    /// </summary>
     public partial class GroupCRUD : UserControl
     {
         public GroupCRUD()
@@ -25,11 +26,10 @@ namespace FYP_Management
             AddGrp addGrp = new();
             addGrp.ShowDialog();
             LoadData();
-            
         }
+
         private void UpdateGroup_Click(object sender, RoutedEventArgs e)
         {
-            // Ensure a group is selected in the grid
             if (Grid.SelectedItem is not DataRowView row)
             {
                 MessageBox.Show(
@@ -43,14 +43,9 @@ namespace FYP_Management
 
             try
             {
-                // Extract the GroupId (column 0) from the selected row
                 int groupId = Convert.ToInt32(row.Row[0]);
-
-                // Open the UpdateGroup window, passing the selected GroupId
                 var editWindow = new UpdateGroup(groupId);
                 editWindow.ShowDialog();
-
-                // After closing the edit window, refresh the main grid
                 LoadData();
             }
             catch (Exception ex)
@@ -64,7 +59,6 @@ namespace FYP_Management
             }
         }
 
-
         private void LoadData()
         {
             try
@@ -75,23 +69,24 @@ namespace FYP_Management
             {
                 MessageBox.Show("Error loading data from Database " + ex, "Alert", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
-        }   
+        }
+
         private void ClearTxt_Click(object sender, RoutedEventArgs e)
         {
             SearchBar.Text = "";
         }
+
         private void Grid_Loaded(object sender = null, RoutedEventArgs e = null)
         {
-            // try { Grid.Columns[0].Visibility = Visibility.Collapsed; } catch { }
         }
+
         private void SearchBar_TextChanged(object sender, TextChangedEventArgs e)
         {
-            // data changes as text changes
             if (SearchBar.Text == "")
             {
                 LoadData();
             }
-            else if (int.TryParse(SearchBar.Text.ToString(),out int indd))
+            else if (int.TryParse(SearchBar.Text.ToString(), out int indd))
             {
                 Grid.ItemsSource = Group_Helper.SearchGroup(int.Parse(SearchBar.Text.ToString())).DefaultView;
             }
@@ -99,8 +94,7 @@ namespace FYP_Management
 
         private void Grid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            DataRowView row = Grid.SelectedItem as DataRowView;
-            if (row == null)
+            if (Grid.SelectedItem is not DataRowView row)
             {
                 MessageBox.Show("Please Select a value from Table", "Alert", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
@@ -108,7 +102,6 @@ namespace FYP_Management
             {
                 try
                 {
-                    //  Get the selected group table from database
                     StudentsGrid.ItemsSource = Group_Helper.GetStudentsFromGroup(int.Parse(row.Row[0].ToString())).DefaultView;
                     StudentsGrid.Columns[0].Visibility = Visibility.Hidden;
                 }
@@ -116,6 +109,44 @@ namespace FYP_Management
                 {
                     MessageBox.Show("Error Getting Data from Database " + ex, "Alert", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
+            }
+        }
+
+        private void GenerateReport_Click(object sender, RoutedEventArgs e)
+        {
+            if (Grid.SelectedItem is not DataRowView selectedRow)
+            {
+                MessageBox.Show("Please select a group from the list first.", "No Group Selected", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            int groupId = Convert.ToInt32(selectedRow.Row[0]);
+
+            try
+            {
+                var saveFileDialog = new SaveFileDialog
+                {
+                    FileName = $"Group_{groupId}_Grade_Report.pdf",
+                    Filter = "PDF Files (*.pdf)|*.pdf",
+                    Title = "Save Grade Report"
+                };
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    var reportModel = Report_Helper.GetGroupReportData(groupId);
+                    var document = new GroupReportDocument(reportModel);
+                    document.GeneratePdf(saveFileDialog.FileName);
+
+                    var result = MessageBox.Show("Report generated successfully. Would you like to open it?", "Success", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        Process.Start(new ProcessStartInfo(saveFileDialog.FileName) { UseShellExecute = true });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while generating the report.\n\nDetails: {ex.Message}", "Report Generation Failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }
