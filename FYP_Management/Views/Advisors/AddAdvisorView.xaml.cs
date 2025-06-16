@@ -23,10 +23,14 @@ public partial class AddAdvisorView : Window
         if (!validate())
             return;
 
+        // Use a single connection and transaction for the entire "all or nothing" operation
+        using var conn = Config.GetConnection();
+        conn.Open();
+        using var transaction = conn.BeginTransaction();
         try
         {
-            // Create Person object using form inputs
-            Person person = new Person(
+            // Create the person object from the form inputs
+            Person person = new(
                 FirstName.Text,
                 LastName.Text,
                 ContactNo.Text,
@@ -34,31 +38,35 @@ public partial class AddAdvisorView : Window
                 DatePicker.SelectedDate.Value,
                 Lookup.getIndexFromValue(CmboxGender.SelectedValue.ToString())
             );
+            int newPersonId = Person_Helper.AddPerson(person);
 
-            // Add person to database
-            Person_Helper.AddPerson(person);
-
-            // Add advisor using the inserted person's ID
             Advisor_Helper.AddAdvisor(
-                Person_Helper.getLastPersonId(),
+                newPersonId,
                 Lookup.getIndexFromValue(DesignationCmBox.SelectedValue.ToString()),
-                int.Parse(Salarytxtbox.Text)
+                int.Parse(Salarytxtbox.Text),
+                conn, transaction
             );
+            transaction.Commit();
 
-            // Close only this dialog
+            MessageBox.Show("Advisor created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             this.DialogResult = true;
+        }
+        catch (FormatException)
+        {
+            transaction.Rollback();
+            MessageBox.Show("Invalid salary format. Please enter numbers only.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
         catch (Exception ex)
         {
+            transaction.Rollback();
             MessageBox.Show(
-                "There is an error while saving the record:\n" + ex.Message,
-                "Error",
+                "The operation failed and all changes have been undone.\n\nError: " + ex.Message,
+                "Transaction Failed",
                 MessageBoxButton.OK,
                 MessageBoxImage.Error
             );
         }
     }
-
 
     private void Close_Click(object sender, RoutedEventArgs e)
     {

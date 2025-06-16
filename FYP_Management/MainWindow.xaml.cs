@@ -1,6 +1,7 @@
 ﻿using FYP_Management.HelperClasses;
 using FYP_Management.Views;
 using FYP_Management.Views.Students;
+using FYP_Management.Views.Users;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -66,6 +67,11 @@ namespace FYP_Management
         {
             mainField.Children.Clear();
             mainField.Children.Add(new DashboardContainerView());
+        }
+        private void UsersBtn_Click(object sender, RoutedEventArgs e)
+        {
+            mainField.Children.Clear();
+            mainField.Children.Add(new CreateUserView());
         }
     }
 }

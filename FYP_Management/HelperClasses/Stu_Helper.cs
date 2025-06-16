@@ -19,7 +19,19 @@ namespace FYP_Management.HelperClasses
             con.Open();
             cmd.ExecuteNonQuery();
         }
+        public static void AddStudent(int personId, string regNo, SqlConnection con, SqlTransaction tran)
+        {
+            // This assumes you have a stored procedure named 'dbo.AddStudent'
+            using var cmd = new SqlCommand("usp_AddStudent", con, tran); // Associate command with transaction
+            cmd.CommandType = CommandType.StoredProcedure;
 
+            // Assuming your procedure takes PersonId and RegistrationNo
+            cmd.Parameters.AddWithValue("@Id", personId);
+            cmd.Parameters.AddWithValue("@Regno", regNo);
+
+            // The calling method handles opening/closing the connection and committing/rolling back.
+            cmd.ExecuteNonQuery();
+        }
         public static void DeleteStudent(int id)
         {
             using var con = Config.GetConnection();

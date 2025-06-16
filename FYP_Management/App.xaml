@@ -2,8 +2,7 @@
     x:Class="FYP_Management.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    ShutdownMode="OnMainWindowClose"
-    StartupUri="MainWindow.xaml">
+    ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
         <!--  Brushes  -->
         <SolidColorBrush x:Key="First Text Color" Color="#E9EFC0" />

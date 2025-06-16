@@ -1,7 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using System;
 using System.Data;
-using System.Threading.Tasks.Dataflow;
 
 namespace FYP_Management.HelperClasses
 {
@@ -22,6 +21,17 @@ namespace FYP_Management.HelperClasses
             cmd.ExecuteNonQuery();
         }
 
+        public static void AddAdvisor(int personId, int designation, int salary, SqlConnection con, SqlTransaction tran)
+        {
+            using var cmd = new SqlCommand("dbo.AddAdvisor", con, tran);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@id", personId);
+            cmd.Parameters.AddWithValue("@designation", designation);
+            cmd.Parameters.AddWithValue("@salary", salary);
+            cmd.ExecuteNonQuery();
+        }
+
         public static DataTable GetAdvisorTableDetails()
         {
             using var con = Config.GetConnection();
@@ -37,7 +47,7 @@ namespace FYP_Management.HelperClasses
 
         /* ---------- UPDATE ---------- */
         public static void UpdateAdvisor(int designation, int salary, int advisorId)
-        { 
+        {
             using var con = Config.GetConnection();
             using var cmd = new SqlCommand("dbo.UpdateAdvisor", con)
             {

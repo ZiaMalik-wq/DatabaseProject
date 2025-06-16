@@ -33,38 +33,43 @@ namespace FYP_Management.Views.Students
             if (!Validate())
                 return;
 
+            // Ensure date is selected
+            if (Datepicker.SelectedDate == null)
+            {
+                MessageBox.Show("Please select a valid date of birth.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Use a single connection and transaction for the entire operation
+            using var conn = Config.GetConnection();
+            conn.Open();
+            using var transaction = conn.BeginTransaction();
             try
             {
-                // Ensure date is selected
-                if (Datepicker.SelectedDate == null)
-                {
-                    MessageBox.Show("Please select a valid date of birth.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
-                Person person = new(FirstName.Text,
+                // Create the person object from the form
+                Person person = new(
+                    FirstName.Text,
                     LastName.Text,
                     ContactNo.Text,
                     Email.Text,
                     Datepicker.SelectedDate.Value,
-                    Lookup.getIndexFromValue(CmboxGender.SelectedValue.ToString()));
-                // Add person to database
-                Person_Helper.AddPerson(person);
-
-                // Add student record linked to person
-                Stu_Helper.AddStudent(
-                    Person_Helper.getLastPersonId(),
-                    RegNo.Text
+                    Lookup.getIndexFromValue(CmboxGender.SelectedValue.ToString())
                 );
 
-                // Close window after successful insert
+                int newPersonId = Person_Helper.AddPerson(person);
+                Stu_Helper.AddStudent(newPersonId, RegNo.Text, conn, transaction);
+                transaction.Commit();
+
+                MessageBox.Show("Student created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 this.Close();
             }
             catch (Exception ex)
             {
+                transaction.Rollback();
+
                 MessageBox.Show(
-                    "There was an error while updating the record:\n" + ex.Message,
-                    "Error",
+                    "The operation failed and all changes have been undone.\n\nError: " + ex.Message,
+                    "Transaction Failed",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error
                 );
